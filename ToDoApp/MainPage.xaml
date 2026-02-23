@@ -1,0 +1,46 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="ToDoApp.MainPage">
+
+    <ScrollView Orientation="Vertical">
+        <VerticalStackLayout Padding="20,10"
+                             Spacing="5">
+            <Grid Padding="5,0" 
+                Margin="0,0,0,20">
+
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"></RowDefinition>
+                </Grid.RowDefinitions>
+
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"></ColumnDefinition>
+                    <ColumnDefinition Width="*"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+
+                <HorizontalStackLayout Grid.Row="0"
+                                       Grid.Column="0"
+                                       Spacing="5">
+                    <Image Source="solar_check_square_bold_96px.png" />
+
+                    <Label VerticalOptions="Center"
+                           Text="CheckBox"
+                           FontSize="18"
+                           FontAttributes="Bold"/>
+                </HorizontalStackLayout>
+
+                <Image Grid.Row="0"
+                       Grid.Column="1"
+                       VerticalOptions="Center"
+                       HorizontalOptions="End"
+                       Source="solar_settings_minimalistic_bold_48px.png"/>
+
+            </Grid>
+
+            <Border Style="{StaticResource TaskBorderUnchecked}"></Border>
+            <Border Style="{StaticResource TaskBorderUnchecked}"></Border>
+            <Border Style="{StaticResource TaskBorderUnchecked}"></Border>
+        </VerticalStackLayout>
+    </ScrollView>
+
+</ContentPage>
