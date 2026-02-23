@@ -66,8 +66,14 @@
                     <ColumnDefinition Width="*"></ColumnDefinition>
                 </Grid.ColumnDefinitions>
 
-                <HorizontalStackLayout>
-                    <Entry Placeholder="Tap 'Enter' to create subtasks"/>
+                <HorizontalStackLayout Grid.Row="0"
+                                       Grid.Column="0"
+                                       Grid.ColumnSpan="2"
+                                        Spacing="5">
+                    <Image Source="solar_check_square_linear_24px.png"
+                           VerticalOptions="Center"/>
+                    <Entry Placeholder="Tap 'Enter' to create subtasks"
+                           VerticalOptions="Center"/>
                     
                 </HorizontalStackLayout>
             </Grid>
