@@ -438,4 +438,14 @@
         <Setter Property="StrokeShape" Value="RoundRectangle 16"/>
     </Style>
 
+    <Style x:Key="TaskEntryBorder" TargetType="Border">
+        <Setter Property="IsVisible" Value="True"/>
+        <Setter Property="VerticalOptions" Value="End"/>
+        <Setter Property="Margin" Value="15,10"/>
+        <Setter Property="Padding" Value="20,30"/>
+        <Setter Property="HeightRequest" Value="180"/>
+        <Setter Property="BackgroundColor" Value="#000000"/>
+        <Setter Property="StrokeShape" Value="RoundRectangle 16"/>
+    </Style>
+
 </ResourceDictionary>

@@ -7,5 +7,10 @@
             InitializeComponent();
         }
 
+        private void OnAddTaskTapped(object Sender, TappedEventArgs args)
+        {
+            
+        }
+
     }
 }
