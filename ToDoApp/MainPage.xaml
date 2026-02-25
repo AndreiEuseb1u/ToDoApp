@@ -6,9 +6,9 @@
 
     <Grid>
         <ScrollView Orientation="Vertical">
-            <VerticalStackLayout Padding="20,10"
+            <VerticalStackLayout Padding="16,10"
                                  Spacing="5">
-                <Grid Padding="5,0" 
+                <Grid Padding="0,0" 
                     Margin="0,0,0,20">
 
                     <Grid.RowDefinitions>
@@ -22,7 +22,7 @@
 
                     <HorizontalStackLayout Grid.Row="0"
                                            Grid.Column="0"
-                                           Spacing="5">
+                                           Spacing="10">
                         <Image Source="solar_check_square_bold_96px.png" />
 
                         <Label VerticalOptions="Center"
@@ -49,7 +49,7 @@
         <Image Source="solar_add_circle_bold_96px.png"
                VerticalOptions="End"
                HorizontalOptions="End"
-               Margin="0,0,10,10">
+               Margin="16,0">
             <Image.GestureRecognizers>
                 <TapGestureRecognizer Tapped="OnAddTaskTapped"/>
             </Image.GestureRecognizers>
@@ -64,8 +64,8 @@
                 </Grid.RowDefinitions>
 
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="4*"></ColumnDefinition>
-                    <ColumnDefinition Width="6*"></ColumnDefinition>
+                    <ColumnDefinition Width="5*"></ColumnDefinition>
+                    <ColumnDefinition Width="5*"></ColumnDefinition>
                 </Grid.ColumnDefinitions>
 
                 <HorizontalStackLayout Grid.Row="0"

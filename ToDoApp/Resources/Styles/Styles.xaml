@@ -435,6 +435,7 @@
         <Setter Property="Padding" Value="10"/>
         <Setter Property="HeightRequest" Value="70"/>
         <Setter Property="BackgroundColor" Value="#000000"/>
+        <Setter Property="Stroke" Value="Transparent"/>
         <Setter Property="StrokeShape" Value="RoundRectangle 16"/>
     </Style>
 
@@ -442,21 +443,24 @@
         <Setter Property="Padding" Value="10"/>
         <Setter Property="HeightRequest" Value="70"/>
         <Setter Property="BackgroundColor" Value="#222222"/>
+        <Setter Property="Stroke" Value="Transparent"/>
         <Setter Property="StrokeShape" Value="RoundRectangle 16"/>
     </Style>
 
     <Style x:Key="TaskEntryBorder" TargetType="Border">
-        <Setter Property="IsVisible" Value="True"/>
+        <Setter Property="IsVisible" Value="False"/>
         <Setter Property="VerticalOptions" Value="End"/>
-        <Setter Property="Margin" Value="15,10"/>
+        <Setter Property="Margin" Value="16,0"/>
         <Setter Property="Padding" Value="30,0"/>
         <Setter Property="HeightRequest" Value="180"/>
+        <Setter Property="HorizontalOptions" Value="Fill"/>
         <Setter Property="BackgroundColor" Value="#000000"/>
+        <Setter Property="Stroke" Value="Transparent"/>
         <Setter Property="StrokeShape" Value="RoundRectangle 16"/>
     </Style>
 
     <Style x:Key="TaskReminderBorder" TargetType="Border">
-        <Setter Property="HeightRequest" Value="30"/>
+        <Setter Property="HeightRequest" Value="40"/>
         <Setter Property="HorizontalOptions" Value="Fill"/>
         <Setter Property="Stroke" Value="Transparent"/>
         <Setter Property="StrokeShape" Value="RoundRectangle 8"/>
