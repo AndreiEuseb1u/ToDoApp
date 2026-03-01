@@ -5,33 +5,56 @@
              BackgroundColor="#F5EFED">
 
     <Grid>
+        
+        <!-- Grid / Similar to Absolute Layout -->
+        
+        <!-- Scroll View -->
+
         <ScrollView Orientation="Vertical">
+
             <VerticalStackLayout Padding="16,10"
                                  Spacing="5">
+                
+                <!-- Footer Grid Template -->
+                
                 <Grid Padding="0,0" 
                     Margin="0,0,0,20">
+                    
+                    <!-- Row Template -->
 
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"></RowDefinition>
                     </Grid.RowDefinitions>
+                    
+                    <!-- Grid Template -->
 
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"></ColumnDefinition>
                         <ColumnDefinition Width="*"></ColumnDefinition>
                     </Grid.ColumnDefinitions>
+                    
+                    <!-- App Logo -->
 
                     <HorizontalStackLayout Grid.Row="0"
                                            Grid.Column="0"
                                            Spacing="10">
+                        
+                        <!-- App Icon -->
+                        
                         <Image Source="solar_check_square_bold_96px.png" />
+                        
+                        <!-- App Label -->
 
                         <Label VerticalOptions="Center"
                                Text="CheckBox"
                                FontSize="18"
                                FontAttributes="Bold"
                                TextColor="#000000"/>
+                        
                     </HorizontalStackLayout>
 
+                    <!-- Settings Button Icon -->
+                    
                     <Image Grid.Row="0"
                            Grid.Column="1"
                            VerticalOptions="Center"
@@ -39,49 +62,117 @@
                            Source="solar_settings_minimalistic_bold_48px.png"/>
 
                 </Grid>
+                
+                <!-- Task Collection -->
 
-                <Border Style="{StaticResource TaskBorderUnchecked}"></Border>
-                <Border Style="{StaticResource TaskBorderUnchecked}"></Border>
-                <Border Style="{StaticResource TaskBorderChecked}"></Border>
+                <CollectionView x:Name="TaskView">
+                    
+                    <!-- Item Template -->
+                    
+                    <CollectionView.ItemTemplate>
+                        
+                        <DataTemplate>
+                            
+                            <!-- Task Border -->
+                            
+                            <Border Style="{StaticResource TaskBorderUnchecked}"
+                                    Margin="0,0,0,10">
+                                
+                                <HorizontalStackLayout Spacing="20">
+                                    
+                                    <!-- Task Status Icon (Done / Undone) -->
+                                    
+                                    <Image Source="solar_check_square_linear_24px.png" 
+                                           VerticalOptions="Center"></Image>
+                                    
+                                    <!-- Task Description Label -->
+                                    
+                                    <Label Text="{Binding TaskDescription}" 
+                                           VerticalOptions="Center" 
+                                           TextColor="White"
+                                           FontAttributes="Bold"
+                                           FontSize="16"></Label>
+                                    
+                                </HorizontalStackLayout>
+                                
+                            </Border>
+                            
+                        </DataTemplate>
+                        
+                    </CollectionView.ItemTemplate>
+                    
+                </CollectionView>
+                
             </VerticalStackLayout>
+            
         </ScrollView>
+
+        <!-- Add Task Button -->
+
+        <!-- Add Task Button Icon -->
 
         <Image Source="solar_add_circle_bold_96px.png"
                VerticalOptions="End"
                HorizontalOptions="End"
                Margin="16,0">
+
+            <!-- Add Task Button Gesture Recognizer -->
+            
             <Image.GestureRecognizers>
                 <TapGestureRecognizer Tapped="OnAddTaskTapped"/>
             </Image.GestureRecognizers>
+            
         </Image>
+        
+        <!-- Entry Border -->
 
         <Border x:Name="EntryBorder"
                 Style="{StaticResource TaskEntryBorder}">
+            
             <Grid>
+                
+                <!-- Grid Template -->
+                
+                <!-- Row Template-->
+                
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"></RowDefinition>
                     <RowDefinition Height="*"></RowDefinition>
                 </Grid.RowDefinitions>
+                
+                <!-- Column Tempalte -->
 
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="5*"></ColumnDefinition>
                     <ColumnDefinition Width="5*"></ColumnDefinition>
                 </Grid.ColumnDefinitions>
+                
+                <!-- Task Description Entry-->
 
                 <HorizontalStackLayout Grid.Row="0"
                                        Grid.Column="0"
                                        Grid.ColumnSpan="2"
                                        Spacing="5">
+
+                    <!-- Task Description Entry Icon -->
+                    
                     <Image Source="solar_check_square_linear_24px.png"
                            VerticalOptions="Center"/>
+
+                    <!-- Task Description Entry Entry -->
+                    
                     <Entry x:Name="OnEntryAdd"
+                           TextChanged="OnEntryTextChanged"
                            Placeholder="Tap 'Enter' to create subtasks"
                            VerticalOptions="Center"
                            FontSize="14"
                            PlaceholderColor="#8F8F8F"
+                           TextColor="White"
                            FontAttributes="None"/>
                     
                 </HorizontalStackLayout>
+                
+                <!-- Task Reminder Button -->
 
                 <Border Style="{StaticResource TaskReminderBorder}"
                         Grid.Row="1"
@@ -89,28 +180,50 @@
 
                     <HorizontalStackLayout Spacing="5"
                                            HorizontalOptions="Center">
+
+                        <!-- Task Reminder Icon -->
+                        
                         <Image Source="solar_alarm_linear_12px.png"
                                VerticalOptions="Center"/>
+
+                        <!-- Task Reminder Label -->
 
                         <Label Text="Set Reminder"
                                TextColor="#C8C8C8"
                                FontSize="12"
                                FontAttributes="Bold"
                                VerticalOptions="Center"/>
+                        
                     </HorizontalStackLayout>
                     
                 </Border>
+                
+                <!-- Done Button -->
 
-                <Label Grid.Row="1"
+                <!-- Done Button Label -->
+                
+                <Label x:Name="DoneButton"
+                       Grid.Row="1"
                        Grid.Column="1"
                        Text="Done"
                        TextColor="#8F8F8F"
                        HorizontalOptions="End"
                        VerticalOptions="Center"
                        FontAttributes="Bold"
-                       FontSize="14"/>
+                       FontSize="14">
+
+                    <!-- Done Button Gesture Recognizer -->
+                    
+                    <Label.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="OnEntryAdded"/>
+                    </Label.GestureRecognizers>
+                    
+                </Label>
+                
             </Grid>
+            
         </Border>
+        
     </Grid>
 
 </ContentPage>
