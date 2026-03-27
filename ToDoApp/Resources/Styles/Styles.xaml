@@ -436,7 +436,7 @@
         <Setter Property="HeightRequest" Value="70"/>
         <Setter Property="BackgroundColor" Value="#000000"/>
         <Setter Property="Stroke" Value="Transparent"/>
-        <Setter Property="StrokeShape" Value="RoundRectangle 16"/>
+        <Setter Property="StrokeShape" Value="RoundRectangle 12"/>
     </Style>
 
     <Style x:Key="TaskBorderChecked" TargetType="Border">
@@ -467,5 +467,23 @@
         <Setter Property="BackgroundColor" Value="#1F1F1F"/>
 
     </Style>
+
+	<Style x:Key="SearchForTaskBorder" TargetType ="Border">
+		<Setter Property="HeightRequest" Value =" 30"/>
+		<Setter Property="HorizontalOptions" Value="Fill"/>
+		<Setter Property="Stroke" Value="Transparent"/>
+		<Setter Property="StrokeShape" Value="RoundRectangle 8"/>
+		<Setter Property="BackgroundColor" Value="#1F1F1F"/>
+		
+	</Style>
+
+	<Style x:Key="TasksProgressBorder" TargetType ="Border">
+		<Setter Property="HeightRequest" Value =" 80"/>
+		<Setter Property="HorizontalOptions" Value="Fill"/>
+		<Setter Property="Stroke" Value="Transparent"/>
+		<Setter Property="StrokeShape" Value="RoundRectangle 8"/>
+		<Setter Property="BackgroundColor" Value="#1F1F1F"/>
+
+	</Style>
 
 </ResourceDictionary>

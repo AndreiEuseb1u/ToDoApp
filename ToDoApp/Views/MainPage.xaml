@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="ToDoApp.MainPage"
+             x:Class="ToDoApp.Views.MainPage"
              BackgroundColor="#F5EFED">
 
     <Grid>
@@ -65,37 +65,52 @@
                 
                 <!-- Task Collection -->
 
-                <CollectionView x:Name="TaskView">
+                <CollectionView x:Name="TaskView" ItemsSource="{Binding TaskList}">
                     
                     <!-- Item Template -->
                     
                     <CollectionView.ItemTemplate>
                         
                         <DataTemplate>
+
+                            <!-- SwipeView wrapper pentru fiecare task -->
+
+                            <SwipeView>
+
+                                <SwipeView.RightItems>
+                                    <SwipeItems>
+                                        <SwipeItem Text="Delete"
+                                                   BackgroundColor="Red"
+                                                   Command="{Binding BindingContext.DeleteTaskCommand, Source={x:Reference TaskView}}"
+                                                   CommandParameter="{Binding .}"/>
+                                    </SwipeItems>
+                                </SwipeView.RightItems>
+                                <!-- Task Border -->
                             
-                            <!-- Task Border -->
+                                <Border Style="{StaticResource TaskBorderUnchecked}"
+                                        Margin="0,0,0,10">
+                                
+                                    <HorizontalStackLayout Spacing="20">
+                                    
+                                        <!-- Task Status Icon (Done / Undone) -->
+                                    
+                                        <Image Source="solar_check_square_linear_24px.png" 
+                                               VerticalOptions="Center"></Image>
+                                    
+                                        <!-- Task Description Label -->
+                                    
+                                        <Label Text="{Binding TaskDescription}" 
+                                               VerticalOptions="Center" 
+                                               TextColor="White"
+                                               FontAttributes="Bold"
+                                               FontSize="16"></Label>
+                                    
+                                    </HorizontalStackLayout>
+                                
+                                </Border>
+                                
+                            </SwipeView>    
                             
-                            <Border Style="{StaticResource TaskBorderUnchecked}"
-                                    Margin="0,0,0,10">
-                                
-                                <HorizontalStackLayout Spacing="20">
-                                    
-                                    <!-- Task Status Icon (Done / Undone) -->
-                                    
-                                    <Image Source="solar_check_square_linear_24px.png" 
-                                           VerticalOptions="Center"></Image>
-                                    
-                                    <!-- Task Description Label -->
-                                    
-                                    <Label Text="{Binding TaskDescription}" 
-                                           VerticalOptions="Center" 
-                                           TextColor="White"
-                                           FontAttributes="Bold"
-                                           FontSize="16"></Label>
-                                    
-                                </HorizontalStackLayout>
-                                
-                            </Border>
                             
                         </DataTemplate>
                         
@@ -117,9 +132,9 @@
                Margin="16,0">
 
             <!-- Add Task Button Gesture Recognizer -->
-            
+
             <Image.GestureRecognizers>
-                <TapGestureRecognizer Tapped="OnAddTaskTapped"/>
+                <TapGestureRecognizer Command="{Binding ShowAddTaskCommand}"/>
             </Image.GestureRecognizers>
             
         </Image>
@@ -127,7 +142,8 @@
         <!-- Entry Border -->
 
         <Border x:Name="EntryBorder"
-                Style="{StaticResource TaskEntryBorder}">
+                Style="{StaticResource TaskEntryBorder}"
+                IsVisible="{Binding IsEntryVisible}">
             
             <Grid>
                 
@@ -160,9 +176,9 @@
                            VerticalOptions="Center"/>
 
                     <!-- Task Description Entry Entry -->
-                    
+
                     <Entry x:Name="OnEntryAdd"
-                           TextChanged="OnEntryTextChanged"
+                           Text="{Binding NewTaskDescription, Mode=TwoWay}"
                            Placeholder="Tap 'Enter' to create subtasks"
                            VerticalOptions="Center"
                            FontSize="14"
@@ -201,21 +217,21 @@
                 <!-- Done Button -->
 
                 <!-- Done Button Label -->
-                
+
                 <Label x:Name="DoneButton"
                        Grid.Row="1"
                        Grid.Column="1"
                        Text="Done"
-                       TextColor="#8F8F8F"
+                       TextColor="{Binding DoneButtonTextColor}"
                        HorizontalOptions="End"
                        VerticalOptions="Center"
                        FontAttributes="Bold"
                        FontSize="14">
 
                     <!-- Done Button Gesture Recognizer -->
-                    
+
                     <Label.GestureRecognizers>
-                        <TapGestureRecognizer Tapped="OnEntryAdded"/>
+                        <TapGestureRecognizer Command="{Binding AddTaskCommand}"/>
                     </Label.GestureRecognizers>
                     
                 </Label>
