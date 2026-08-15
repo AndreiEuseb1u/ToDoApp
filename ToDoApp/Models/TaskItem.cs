@@ -1,18 +1,20 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace ToDoApp.Models;
-
 public partial class TaskItem : ObservableObject
 {
     [ObservableProperty]
-    private string _taskDescription;
+    private Guid _userId;
 
     [ObservableProperty]
-    private bool _state;
+    private int _taskItemId;
 
-    public TaskItem(string description, bool state)
-    {
-        TaskDescription = description;
-        State = state;
-    }
+    [ObservableProperty]
+    private string _taskDescription = string.Empty;
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(CheckboxIconSource))]
+    private bool _isCompleted;
+
+    public string CheckboxIconSource => IsCompleted ? "solar_check_square_bold_24px.png" : "solar_check_square_linear_24px.png";
 }

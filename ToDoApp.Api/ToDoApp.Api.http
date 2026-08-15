@@ -1,0 +1,98 @@
+@ToDoApp.Api_HostAddress = http://localhost:5246
+
+### GET all tasks pentru un user
+GET {{ToDoApp.Api_HostAddress}}/Tasks?userId=1
+Accept: application/json
+
+### POST — creezi un task nou
+POST {{ToDoApp.Api_HostAddress}}/Tasks
+Content-Type: application/json
+
+{
+  "UserId": 1,
+  "TaskDescription": "Cumpără lapte",
+  "
+  
+  
+  
+  ": false
+}
+
+### GET — confirmi că task-ul nou apare în listă
+GET {{ToDoApp.Api_HostAddress}}/Tasks?userId=1
+Accept: application/json
+
+### PUT — modifici task-ul (înlocuiește {id} cu TaskItemId-ul real, din răspunsul de la POST/GET de mai sus)
+PUT {{ToDoApp.Api_HostAddress}}/Tasks/1
+Content-Type: application/json
+
+{
+  "TaskDescription": "Cumpără lapte și pâine",
+  "State": true
+}
+
+### GET — confirmi modificarea
+GET {{ToDoApp.Api_HostAddress}}/Tasks?userId=1
+Accept: application/json
+
+### PUT — testezi validarea, cu descriere goală (ar trebui 400 Bad Request)
+PUT {{ToDoApp.Api_HostAddress}}/Tasks/1
+Content-Type: application/json
+
+{
+  "TaskDescription": "",
+  "State": true
+}
+
+### PUT — testezi cu id inexistent (ar trebui 404 Not Found)
+PUT {{ToDoApp.Api_HostAddress}}/Tasks/99999
+Content-Type: application/json
+
+{
+  "TaskDescription": "test",
+  "State": true
+}
+
+### DELETE — ștergi task-ul (înlocuiește {id} cu cel real)
+DELETE {{ToDoApp.Api_HostAddress}}/Tasks/1
+Accept: application/json
+
+### GET — confirmi lista goală (sau fără task-ul șters)
+GET {{ToDoApp.Api_HostAddress}}/Tasks?userId=1
+Accept: application/json
+
+### DELETE — testezi cu id inexistent (ar trebui 404 Not Found)
+DELETE {{ToDoApp.Api_HostAddress}}/Tasks/99999
+Accept: application/json
+
+### POST — testezi validarea, cu descriere goală (ar trebui 400 Bad Request)
+POST {{ToDoApp.Api_HostAddress}}/Tasks
+Content-Type: application/json
+
+{
+  "UserId": 1,
+  "TaskDescription": "",
+  "State": false
+}
+
+###
+
+GET {{ToDoApp.Api_HostAddress}}/Users
+Accept: application/json
+
+###
+
+POST {{ToDoApp.Api_HostAddress}}/Users
+Content-Type: application/json
+
+{
+  "Username": "test",
+  "Email": "test",
+  "PasswordHash": "test"
+}
+
+###
+
+DELETE {{ToDoApp.Api_HostAddress}}/Users/6
+Accept: application/json
+

@@ -1,4 +1,8 @@
 ﻿using Microsoft.Extensions.Logging;
+using ToDoApp.Services.Implementations;
+using ToDoApp.Services.Interfaces;
+using ToDoApp.ViewModels;
+using ToDoApp.Views;
 
 namespace ToDoApp
 {
@@ -34,6 +38,16 @@ namespace ToDoApp
 #if DEBUG
             builder.Logging.AddDebug();
 #endif
+            builder.Services.AddSingleton(sp => new HttpClient
+            {
+                BaseAddress = new Uri("http://10.0.2.2:5246/")
+            });
+
+            builder.Services.AddSingleton<ITaskApiService, TaskApiService>();
+
+            builder.Services.AddSingleton<MainViewModel>();
+
+            builder.Services.AddSingleton<MainPageView>();
 
             return builder.Build();
         }

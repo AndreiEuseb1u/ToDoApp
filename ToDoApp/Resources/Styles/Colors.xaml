@@ -27,6 +27,17 @@
     <Color x:Key="Gray900">#212121</Color>
     <Color x:Key="Gray950">#141414</Color>
 
+    <Color x:Key="AccentColor">#F2BB05</Color>
+    <Color x:Key="AppBackground">#000000</Color>
+    <Color x:Key="TextPrimary">#F8FAFC</Color>
+    <Color x:Key="TextSecondary">#94A3B8</Color>
+    <Color x:Key="TextMuted">#64748B</Color>
+    <Color x:Key="SurfaceDark">#2C2C2E</Color>
+    <Color x:Key="SurfaceDarker">#1C1C1E</Color>
+    <Color x:Key="SurfaceDarkerMuted">#0B0B0C</Color>
+    <Color x:Key="BorderSubtle">#282829</Color>
+    <Color x:Key="BorderSubtleMuted">#171718</Color>
+
     <SolidColorBrush x:Key="PrimaryBrush" Color="{StaticResource Primary}"/>
     <SolidColorBrush x:Key="SecondaryBrush" Color="{StaticResource Secondary}"/>
     <SolidColorBrush x:Key="TertiaryBrush" Color="{StaticResource Tertiary}"/>
