@@ -38,16 +38,49 @@ namespace ToDoApp
 #if DEBUG
             builder.Logging.AddDebug();
 #endif
+            builder.Services.AddSingleton<SessionPersistenceService>();
+
             builder.Services.AddSingleton(sp => new HttpClient
             {
                 BaseAddress = new Uri("http://10.0.2.2:5246/")
             });
 
+            builder.Services.AddSingleton(sp =>
+            {
+                var sessionPersistence = sp.GetRequiredService<SessionPersistenceService>();
+
+                var options = new Supabase.SupabaseOptions
+                {
+                    AutoRefreshToken = true,
+                    AutoConnectRealtime = false,
+                    SessionHandler = sessionPersistence
+
+                };
+
+                var client = new Supabase.Client(
+                    "https://vrwhinokcfhaqipqrnqn.supabase.co", 
+                    "sb_publishable_H7NuxyCFH7fTxtlLdP7N8A_OUhewrCR",
+                    options);
+
+                return client;
+            }); 
+
+
+            builder.Services.AddSingleton<IAuthService, AuthService>();
+
             builder.Services.AddSingleton<ITaskApiService, TaskApiService>();
 
-            builder.Services.AddSingleton<MainViewModel>();
+            builder.Services.AddSingleton<MainPageViewModel>();
 
             builder.Services.AddSingleton<MainPageView>();
+
+            builder.Services.AddSingleton<SignUpPageViewModel>();
+
+            builder.Services.AddSingleton<SignUpPageView>();
+
+            builder.Services.AddSingleton<SignInPageViewModel>();
+
+            builder.Services.AddSingleton<SignInPageView>();
 
             return builder.Build();
         }

@@ -4,7 +4,16 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:local="clr-namespace:ToDoApp"
-    xmlns:views="clr-namespace:ToDoApp.Views">
+    xmlns:views="clr-namespace:ToDoApp.Views"
+    FlyoutBehavior="Disabled">
+
+    <ShellContent
+        ContentTemplate="{DataTemplate views:SignInPageView}"
+        Route="SignInPage" />
+    
+    <ShellContent
+        ContentTemplate="{DataTemplate views:SignUpPageView}"
+        Route="SignUpPage" />
 
     <ShellContent
         ContentTemplate="{DataTemplate views:MainPageView}"

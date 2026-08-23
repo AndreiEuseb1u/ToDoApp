@@ -8,7 +8,7 @@ using ToDoApp.Services.Interfaces;
 
 namespace ToDoApp.Services.Implementations
 {
-    internal class AuthService : IAuthService
+    public class AuthService : IAuthService
     {
         private readonly Supabase.Client _supabaseClient;
 
