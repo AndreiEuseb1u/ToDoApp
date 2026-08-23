@@ -2,15 +2,16 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Maui.Graphics;
 using System.Collections.ObjectModel;
+using ToDoApp.Extensions;
 using ToDoApp.Models;
 using ToDoApp.Services.Interfaces;
 
 namespace ToDoApp.ViewModels;
 
-public partial class MainViewModel : ObservableObject
+public partial class MainPageViewModel : ObservableObject
 {
-    private static readonly Guid CurrentUserId = Guid.Parse("8fcb976d-51e1-4b95-9c77-d8949e0cd546"); // TODO: înlocuiește cu userId real, după autentificare
     private readonly ITaskApiService _taskApiService;
+    private readonly IAuthService _authService;
 
     public ObservableCollection<TaskItem> TaskList { get; } = new();
 
@@ -32,9 +33,10 @@ public partial class MainViewModel : ObservableObject
     [ObservableProperty]
     private TaskItem _taskBeingEdited;
 
-    public MainViewModel(ITaskApiService taskApiService)
+    public MainPageViewModel(ITaskApiService taskApiService, IAuthService authService)
     {
         _taskApiService = taskApiService;
+        _authService = authService;
     }
 
     partial void OnNewTaskDescriptionChanged(string value)
@@ -54,7 +56,11 @@ public partial class MainViewModel : ObservableObject
 
     public async Task LoadTasksAsync()
     {
-        var tasks = await _taskApiService.GetTasksAsync(CurrentUserId);
+        var userId = await _authService.GetUserIdOrRedirectAsync();
+
+        if (userId is null) return;
+
+        var tasks = await _taskApiService.GetTasksAsync(userId.Value);
 
         TaskList.Clear();
 
@@ -78,7 +84,11 @@ public partial class MainViewModel : ObservableObject
 
         if (TaskBeingEdited is null)
         {
-            var newTaskItem = new TaskItem { UserId = CurrentUserId, TaskDescription = NewTaskDescription };
+            var userId = await _authService.GetUserIdOrRedirectAsync();
+
+            if (userId is null) return;
+
+            var newTaskItem = new TaskItem { UserId = userId.Value, TaskDescription = NewTaskDescription };
 
             var createdTask = await _taskApiService.PostTaskAsync(newTaskItem);
 

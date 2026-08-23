@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="ToDoApp.Views.SignUpPageView"
+             BackgroundColor="{StaticResource AppBackground}">
+
+    <ScrollView>
+
+        <VerticalStackLayout Padding="32,48"
+                             Spacing="16">
+
+            <!-- Header -->
+
+            <Image Source="solar_user_plus_rounded_bold_72px.png"
+                   HorizontalOptions="Center"/>
+
+            <VerticalStackLayout Spacing="0"
+                                 HorizontalOptions="Center">
+
+                <Label Text="Create Account"
+                       FontSize="Title"
+                       FontAttributes="Bold"
+                       TextColor="{StaticResource TextPrimary}"
+                       HorizontalOptions="Center"/>
+
+                <Label Text="Sign up to get started with your objectives today"
+                       FontSize="Small"
+                       TextColor="{StaticResource TextSecondary}"
+                       HorizontalOptions="Center"/>
+
+            </VerticalStackLayout>
+
+            <!-- Form fields -->
+
+            <VerticalStackLayout Spacing="16">
+
+                <VerticalStackLayout Spacing="6">
+
+                    <Label Text="Name"
+                           FontSize="Small"
+                           FontAttributes="Bold"
+                           TextColor="{StaticResource TextPrimary}"/>
+
+                    <Border StrokeShape="RoundRectangle 8"
+                            Stroke="{StaticResource BorderSubtle}"
+                            StrokeThickness="1"
+                            BackgroundColor="{StaticResource SurfaceDarker}"
+                            Padding="12,0">
+
+                        <Entry Placeholder="Enter your name"
+                               PlaceholderColor="{StaticResource TextMuted}"
+                               Text="{Binding Name, Mode=TwoWay}"
+                               TextColor="{StaticResource TextPrimary}"
+                               BackgroundColor="Transparent"
+                               HeightRequest="44"/>
+
+                    </Border>
+
+                </VerticalStackLayout>
+
+                <VerticalStackLayout Spacing="6">
+
+                    <Label Text="Email"
+                           FontSize="Small"
+                           FontAttributes="Bold"
+                           TextColor="{StaticResource TextPrimary}"/>
+
+                    <Border StrokeShape="RoundRectangle 8"
+                            Stroke="{StaticResource BorderSubtle}"
+                            StrokeThickness="1"
+                            BackgroundColor="{StaticResource SurfaceDarker}"
+                            Padding="12,0">
+
+                        <Entry Placeholder="Enter your email"
+                               PlaceholderColor="{StaticResource TextMuted}"
+                               Text="{Binding Email, Mode=TwoWay}"
+                               TextColor="{StaticResource TextPrimary}"
+                               BackgroundColor="Transparent"
+                               HeightRequest="44"/>
+
+                    </Border>
+
+                </VerticalStackLayout>
+
+                <VerticalStackLayout Spacing="6">
+
+                    <Label Text="Password"
+                           FontSize="Small"
+                           FontAttributes="Bold"
+                           TextColor="{StaticResource TextPrimary}"/>
+
+                    <Border StrokeShape="RoundRectangle 8"
+                            Stroke="{StaticResource BorderSubtle}"
+                            StrokeThickness="1"
+                            BackgroundColor="{StaticResource SurfaceDarker}"
+                            Padding="12,0">
+
+                        <Entry Placeholder="Create a password"
+                               PlaceholderColor="{StaticResource TextMuted}"
+                               Text="{Binding Password, Mode=TwoWay}"
+                               TextColor="{StaticResource TextPrimary}"
+                               BackgroundColor="Transparent"
+                               IsPassword="True"
+                               HeightRequest="44"/>
+
+                    </Border>
+
+                </VerticalStackLayout>
+
+                <!-- Error message, vizibil doar când există -->
+
+                <Label Text="{Binding ErrorMessage}"
+                       TextColor="Red"
+                       FontSize="Small"
+                       IsVisible="{Binding HasError}"/>
+
+            </VerticalStackLayout>
+
+            <!-- Actions -->
+
+            <VerticalStackLayout Spacing="16">
+
+                <Button Text="Create Account"
+                        FontSize="Small"
+                        FontAttributes="Bold"
+                        TextColor="{StaticResource AppBackground}"
+                        BackgroundColor="{StaticResource AccentColor}"
+                        CornerRadius="16"
+                        HeightRequest="48"
+                        Command="{Binding SignUpCommand}"/>
+
+                <Grid ColumnDefinitions="*,Auto,*"
+                      ColumnSpacing="8"
+                      VerticalOptions="Center">
+
+                    <BoxView Grid.Column="0"
+                             HeightRequest="1"
+                             Color="{StaticResource BorderSubtle}"
+                             VerticalOptions="Center"/>
+
+                    <Label Grid.Column="1"
+                           Text="OR"
+                           FontSize="Small"
+                           FontAttributes="Bold"
+                           TextColor="{StaticResource TextSecondary}"/>
+
+                    <BoxView Grid.Column="2"
+                             HeightRequest="1"
+                             Color="{StaticResource BorderSubtle}"
+                             VerticalOptions="Center"/>
+
+                </Grid>
+
+                <Button Text="Sign up with Google"
+                        FontSize="Small"
+                        FontAttributes="Bold"
+                        TextColor="{StaticResource TextPrimary}"
+                        BackgroundColor="{StaticResource SurfaceDarker}"
+                        CornerRadius="16"
+                        HeightRequest="48"
+                        Command="{Binding SignUpWithGoogleCommand}"/>
+
+                <Button Text="Sign up with Apple"
+                        FontSize="Small"
+                        FontAttributes="Bold"
+                        TextColor="{StaticResource TextPrimary}"
+                        BackgroundColor="{StaticResource SurfaceDarker}"
+                        CornerRadius="16"
+                        HeightRequest="48"
+                        Command="{Binding SignUpWithAppleCommand}"/>
+
+                <Label HorizontalOptions="Center">
+                    <Label.FormattedText>
+                        <FormattedString>
+                            <Span Text="Already have an account? "
+                                  TextColor="{StaticResource TextSecondary}"/>
+                            <Span Text="Sign In"
+                                  TextColor="{StaticResource AccentColor}"
+                                  FontAttributes="Bold">
+                                <Span.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding GoToSignInCommand}"/>
+                                </Span.GestureRecognizers>
+                            </Span>
+                        </FormattedString>
+                    </Label.FormattedText>
+                </Label>
+
+            </VerticalStackLayout>
+
+        </VerticalStackLayout>
+
+    </ScrollView>
+
+</ContentPage>

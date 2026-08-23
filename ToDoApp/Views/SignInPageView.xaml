@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="ToDoApp.Views.SignInPageView"
+             BackgroundColor="{StaticResource AppBackground}">
+
+    <ScrollView>
+
+        <VerticalStackLayout Padding="32,48"
+                             Spacing="16">
+
+            <!-- Header -->
+
+
+                <Image Source="solar_shield_user_bold_72px.png"
+                       HorizontalOptions="Center"/>
+            
+            <VerticalStackLayout Spacing="0"
+                                 HorizontalOptions="Center">
+
+                <Label Text="Welcome Back"
+                       FontSize="Title"
+                       FontAttributes="Bold"
+                       TextColor="{StaticResource TextPrimary}"
+                       HorizontalOptions="Center"/>
+
+                <Label Text="Log in to your account to continue"
+                       FontSize="Small"
+                       TextColor="{StaticResource TextSecondary}"
+                       HorizontalOptions="Center"/>
+
+            </VerticalStackLayout>
+
+            <!-- Form fields -->
+
+            <VerticalStackLayout Spacing="16">
+
+                <VerticalStackLayout Spacing="6">
+
+                    <Label Text="Email"
+                           FontSize="Small"
+                           FontAttributes="Bold"
+                           TextColor="{StaticResource TextPrimary}"/>
+
+                    <Border StrokeShape="RoundRectangle 8"
+                            Stroke="{StaticResource BorderSubtle}"
+                            StrokeThickness="1"
+                            BackgroundColor="{StaticResource SurfaceDarker}"
+                            Padding="12,0">
+
+                        <Entry Placeholder="Enter your email"
+                               PlaceholderColor="{StaticResource TextMuted}"
+                               Text="{Binding Email, Mode=TwoWay}"
+                               TextColor="{StaticResource TextPrimary}"
+                               BackgroundColor="Transparent"
+                               HeightRequest="44"/>
+
+                    </Border>
+
+                </VerticalStackLayout>
+
+                <VerticalStackLayout Spacing="6">
+
+                    <Label Text="Password"
+                           FontSize="Small"
+                           FontAttributes="Bold"
+                           TextColor="{StaticResource TextPrimary}"/>
+
+                    <Border StrokeShape="RoundRectangle 8"
+                            Stroke="{StaticResource BorderSubtle}"
+                            StrokeThickness="1"
+                            BackgroundColor="{StaticResource SurfaceDarker}"
+                            Padding="12,0">
+
+                        <Entry Placeholder="Enter your password"
+                               PlaceholderColor="{StaticResource TextMuted}"
+                               Text="{Binding Password, Mode=TwoWay}"
+                               TextColor="{StaticResource TextPrimary}"
+                               BackgroundColor="Transparent"
+                               IsPassword="True"
+                               HeightRequest="44"/>
+
+                    </Border>
+
+                </VerticalStackLayout>
+
+                <!-- Error message, vizibil doar când există -->
+
+                <Label Text="{Binding ErrorMessage}"
+                       TextColor="Red"
+                       FontSize="Small"
+                       IsVisible="{Binding HasError}"/>
+
+                <!-- Remember me + Forgot password -->
+
+                <Grid ColumnDefinitions="*,*">
+
+                    <HorizontalStackLayout Grid.Column="0"
+                                           Spacing="8"
+                                           VerticalOptions="Center">
+
+                        <Image Source="{Binding RememberMeIconSource}"
+                               WidthRequest="20"
+                               HeightRequest="20">
+                            <Image.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding ToggleRememberMeCommand}"/>
+                            </Image.GestureRecognizers>
+                        </Image>
+
+                        <Label Text="Remember me"
+                               TextColor="{StaticResource TextSecondary}"
+                               FontSize="Small"
+                               VerticalOptions="Center"/>
+
+                    </HorizontalStackLayout>
+
+                    <Label Grid.Column="1"
+                           Text="Forgot Password?"
+                           TextColor="{StaticResource AccentColor}"
+                           FontSize="Small"
+                           HorizontalOptions="End"
+                           VerticalOptions="Center">
+
+                        <Label.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding GoToForgotPasswordCommand}"/>
+                        </Label.GestureRecognizers>
+
+                    </Label>
+
+                </Grid>
+
+            </VerticalStackLayout>
+
+            <!-- Actions -->
+
+            <VerticalStackLayout Spacing="16">
+
+                <Button Text="Sign In"
+                        FontSize="Small"
+                        FontAttributes="Bold"
+                        TextColor="{StaticResource AppBackground}"
+                        BackgroundColor="{StaticResource AccentColor}"
+                        CornerRadius="16"
+                        HeightRequest="48"
+                        Command="{Binding SignInCommand}"/>
+
+                <Label HorizontalOptions="Center">
+                    <Label.FormattedText>
+                        <FormattedString>
+                            <Span Text="Don't have an account? "
+                                  TextColor="{StaticResource TextSecondary}"/>
+                            <Span Text="Sign Up"
+                                  TextColor="{StaticResource AccentColor}"
+                                  FontAttributes="Bold">
+                                <Span.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding GoToSignUpCommand}"/>
+                                </Span.GestureRecognizers>
+                            </Span>
+                        </FormattedString>
+                    </Label.FormattedText>
+                </Label>
+
+            </VerticalStackLayout>
+
+        </VerticalStackLayout>
+
+    </ScrollView>
+
+</ContentPage>

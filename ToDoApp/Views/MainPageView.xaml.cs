@@ -4,8 +4,9 @@ namespace ToDoApp.Views
 {
     public partial class MainPageView : ContentPage
     {
-        private readonly MainViewModel _viewModel;
-        public MainPageView(MainViewModel viewModel)
+        private readonly MainPageViewModel _viewModel;
+
+        public MainPageView(MainPageViewModel viewModel)
         {
             InitializeComponent();
             BindingContext = viewModel;
@@ -15,6 +16,7 @@ namespace ToDoApp.Views
         protected override async void OnAppearing()
         {
             base.OnAppearing();
+
             await _viewModel.LoadTasksAsync();
         }
     }
