@@ -3,11 +3,13 @@ using ToDoApp.Api.Models;
 using ToDoApp.Api.Data;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ToDoApp.Api.Controllers
 {
     [ApiController]
     [Route("[controller]")]
+    [Authorize]
     public class TasksController : ControllerBase
     {
         private readonly AppDbContext _appDbContext;
