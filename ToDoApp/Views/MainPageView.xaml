@@ -117,13 +117,13 @@
                                 ItemsSource="{Binding TaskList}">
 
                     <!-- Item Layout -->
-                    
+
                     <CollectionView.ItemsLayout>
                         <LinearItemsLayout Orientation="Vertical" ItemSpacing="10"/>
                     </CollectionView.ItemsLayout>
 
                     <!-- Item Template -->
-                
+
                     <CollectionView.ItemTemplate>
 
                         <DataTemplate>
@@ -182,17 +182,6 @@
                     </CollectionView.ItemTemplate>
 
                 </CollectionView>
-
-                <Label Text="Body" TextColor="{StaticResource TextPrimary}" FontSize="Body"/>
-                <Label Text="Caption" TextColor="{StaticResource TextPrimary}" FontSize="Caption"/>
-                <Label Text="Default" TextColor="{StaticResource TextPrimary}" FontSize="Default"/>
-                <Label Text="Header" TextColor="{StaticResource TextPrimary}" FontSize="Header"/>
-                <Label Text="Large" TextColor="{StaticResource TextPrimary}" FontSize="Large"/>
-                <Label Text="Medium" TextColor="{StaticResource TextPrimary}" FontSize="Medium"/>
-                <Label Text="Micro" TextColor="{StaticResource TextPrimary}" FontSize="Micro"/>
-                <Label Text="Small" TextColor="{StaticResource TextPrimary}" FontSize="Small"/>
-                <Label Text="Subtitle" TextColor="{StaticResource TextPrimary}" FontSize="Subtitle"/>
-                <Label Text="Title" TextColor="{StaticResource TextPrimary}" FontSize="Title"/>
 
             </VerticalStackLayout>
 
