@@ -1,4 +1,5 @@
 <Solution>
+  <Project Path="ToDoApp.Api.Tests/ToDoApp.Api.Tests.csproj" />
   <Project Path="ToDoApp.Api/ToDoApp.Api.csproj" Id="47cef1a5-3c8e-4138-88e7-b027bbe8f97b" />
   <Project Path="ToDoApp/ToDoApp.csproj">
     <Deploy Solution="Debug|*" />
