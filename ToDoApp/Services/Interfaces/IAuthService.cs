@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using ToDoApp.Models;
+﻿using ToDoApp.Common;
 
 namespace ToDoApp.Services.Interfaces
 {
