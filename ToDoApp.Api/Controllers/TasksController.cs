@@ -4,6 +4,9 @@ using ToDoApp.Api.Data;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
+using ToDoApp.Api.Services.Interfaces;
+using ToDoApp.Api.Common;
+using ToDoApp.Api.Extensions;
 
 namespace ToDoApp.Api.Controllers
 {
@@ -12,91 +15,56 @@ namespace ToDoApp.Api.Controllers
     [Authorize]
     public class TasksController : ControllerBase
     {
-        private readonly AppDbContext _appDbContext;
+        private readonly ITaskService _taskService;
 
-        public TasksController(AppDbContext appDbContext)
+        public TasksController(ITaskService taskService)
         {
-            _appDbContext = appDbContext;
+            _taskService = taskService;
         }
 
         [HttpGet]
         public async Task<ActionResult<List<TaskItem>>> GetTasks([FromQuery] Guid userId)
         {
-            var tasks = await _appDbContext
-                .Tasks
-                .Where(t => t.UserId == userId)
-                .ToListAsync();
+            var result = await _taskService.GetTasks(userId);
 
-            return Ok(tasks);
+            return Ok(result.Data);
         }
 
         [HttpPost]
         public async Task<ActionResult<TaskItem>> PostTask([FromBody] TaskItem taskItem)
         {
-            if (string
-                .IsNullOrWhiteSpace
-                (taskItem.TaskDescription))
+            var result = await _taskService.PostTask(taskItem);
+
+            if (result.Success is false)
             {
-                return BadRequest();
+                return result.ToErrorActionResult(this);
             }
 
-            await _appDbContext
-                .Tasks
-                .AddAsync(taskItem);
-
-            await _appDbContext
-                .SaveChangesAsync();
-
-            return Ok(taskItem);
+            return CreatedAtAction(nameof(GetTasks), new { result.Data!.UserId }, result.Data);
         }
 
         [HttpPut("{id}")]
         public async Task<ActionResult> ModifyTask(int id, [FromBody] TaskItem taskItem)
         {
-            var task = await _appDbContext
-                .Tasks
-                .FindAsync(id);
+            var result = await _taskService.ModifyTask(id, taskItem);
 
-            if (task is null)
+            if (result.Success is false)
             {
-                return NotFound();
+                return result.ToErrorActionResult(this);
             }
 
-            if (string
-                .IsNullOrWhiteSpace
-                (taskItem.TaskDescription))
-            {
-                return BadRequest();
-            }
-
-            task.TaskDescription = taskItem.TaskDescription;
-
-            task.IsCompleted = taskItem.IsCompleted;
-
-            await _appDbContext
-                .SaveChangesAsync();
-
-            return Ok();
+            return Ok(result.Data);
         }
 
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteTask(int id)
         {
-            var task = await _appDbContext
-                .Tasks
-                .FindAsync(id);
+            var result = await _taskService.DeleteTask(id);
 
-            if (task is null)
+            if (result.Success is false)
             {
-                return NotFound();
+                return result.ToErrorActionResult(this);
             }
-
-            _appDbContext
-                .Tasks
-                .Remove(task);
-
-            await _appDbContext
-                .SaveChangesAsync();
 
             return NoContent();
         }

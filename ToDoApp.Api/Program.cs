@@ -2,6 +2,8 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using ToDoApp.Api;
 using ToDoApp.Api.Data;
+using ToDoApp.Api.Services.Implementations;
+using ToDoApp.Api.Services.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,6 +23,8 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidIssuer = "https://vrwhinokcfhaqipqrnqn.supabase.co/auth/v1"
         };
     });
+
+builder.Services.AddScoped<ITaskService, TaskService>();
 
 builder.Services.AddAuthorization();
 
