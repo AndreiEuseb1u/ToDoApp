@@ -12,6 +12,6 @@ jobs:
       - uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '10.0.x'
-      - run: dotnet restore
-      - run: dotnet build --no-restore
-      - run: dotnet test --no-build
+      - run: dotnet restore ToDoApp.Api.Tests/ToDoApp.Api.Tests.csproj
+      - run: dotnet build ToDoApp.Api.Tests/ToDoApp.Api.Tests.csproj --no-restore
+      - run: dotnet test ToDoApp.Api.Tests/ToDoApp.Api.Tests.csproj --no-build
