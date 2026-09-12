@@ -24,10 +24,19 @@ namespace ToDoApp.Api.Services.Implementations
 
         public async Task<ServiceResult<TaskItem>> PostTask(TaskItem taskItem)
         {
+            if (taskItem.UserId == Guid.Empty)
+            {
+                return ServiceResult<TaskItem>.Fail("A valid user is required.", ServiceErrorType.ValidationFailed);
+            }
 
             if (string.IsNullOrWhiteSpace(taskItem.TaskDescription))
             {
                 return ServiceResult<TaskItem>.Fail("Task description cannot be empty", ServiceErrorType.ValidationFailed);
+            }
+
+            if (taskItem.TaskDescription.Length > 1000)
+            {
+                return ServiceResult<TaskItem>.Fail("Task description cannot exceed 1000 characters.", ServiceErrorType.ValidationFailed);
             }
 
             await _appDbContext.Tasks.AddAsync(taskItem);
@@ -37,11 +46,16 @@ namespace ToDoApp.Api.Services.Implementations
             return ServiceResult<TaskItem>.Ok(taskItem);
         }
 
-        public async Task<ServiceResult<TaskItem>> ModifyTask(int id, TaskItem taskItem)
+        public async Task<ServiceResult<TaskItem>> ModifyTask(int id, TaskItem taskItem, Guid userId)
         {
             var task = await _appDbContext.Tasks.FindAsync(id);
 
             if (task is null)
+            {
+                return ServiceResult<TaskItem>.Fail("Task not found", ServiceErrorType.NotFound);
+            }
+
+            if (task.UserId != userId)
             {
                 return ServiceResult<TaskItem>.Fail("Task not found", ServiceErrorType.NotFound);
             }
@@ -60,11 +74,16 @@ namespace ToDoApp.Api.Services.Implementations
             return ServiceResult<TaskItem>.Ok(task);
         }
 
-        public async Task<ServiceResult> DeleteTask(int id)
+        public async Task<ServiceResult> DeleteTask(int id, Guid userId)
         {
             var task = await _appDbContext.Tasks.FindAsync(id);
 
             if (task is null)
+            {
+                return ServiceResult.Fail("Task not found", ServiceErrorType.NotFound);
+            }
+
+            if (task.UserId != userId)
             {
                 return ServiceResult.Fail("Task not found", ServiceErrorType.NotFound);
             }

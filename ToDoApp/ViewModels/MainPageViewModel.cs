@@ -82,6 +82,11 @@ public partial class MainPageViewModel : ObservableObject
             return;
         }
 
+        if (NewTaskDescription.Length > 1000)
+        {
+            return;
+        }
+
         if (TaskBeingEdited is null)
         {
             var userId = await _authService.GetUserIdOrRedirectAsync();

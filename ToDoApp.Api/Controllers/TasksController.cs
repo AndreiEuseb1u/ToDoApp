@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using ToDoApp.Api.Services.Interfaces;
 using ToDoApp.Api.Common;
 using ToDoApp.Api.Extensions;
+using System.Security.Claims;
 
 namespace ToDoApp.Api.Controllers
 {
@@ -23,8 +24,13 @@ namespace ToDoApp.Api.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<TaskItem>>> GetTasks([FromQuery] Guid userId)
+        public async Task<ActionResult<List<TaskItem>>> GetTasks()
         {
+            if (this.TryGetUserId(out var userId) is false)
+            {
+                return Unauthorized("Could not determine the current user.");
+            }
+
             var result = await _taskService.GetTasks(userId);
 
             return Ok(result.Data);
@@ -33,6 +39,13 @@ namespace ToDoApp.Api.Controllers
         [HttpPost]
         public async Task<ActionResult<TaskItem>> PostTask([FromBody] TaskItem taskItem)
         {
+            if (this.TryGetUserId(out var userId) is false)
+            {
+                return Unauthorized("Could not determine the current user.");
+            }
+
+            taskItem.UserId = userId;
+
             var result = await _taskService.PostTask(taskItem);
 
             if (result.Success is false)
@@ -46,7 +59,12 @@ namespace ToDoApp.Api.Controllers
         [HttpPut("{id}")]
         public async Task<ActionResult> ModifyTask(int id, [FromBody] TaskItem taskItem)
         {
-            var result = await _taskService.ModifyTask(id, taskItem);
+            if (this.TryGetUserId(out var userId) is false)
+            {
+                return Unauthorized("Could not determine the current user.");
+            }
+
+            var result = await _taskService.ModifyTask(id, taskItem, userId);
 
             if (result.Success is false)
             {
@@ -59,7 +77,12 @@ namespace ToDoApp.Api.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteTask(int id)
         {
-            var result = await _taskService.DeleteTask(id);
+            if (this.TryGetUserId(out var userId) is false)
+            {
+                return Unauthorized("Could not determine the current user.");
+            }
+
+            var result = await _taskService.DeleteTask(id, userId);
 
             if (result.Success is false)
             {
@@ -67,6 +90,14 @@ namespace ToDoApp.Api.Controllers
             }
 
             return NoContent();
+        }
+
+        [HttpGet("debug-claims")]
+        public ActionResult DebugClaims()
+        {
+            var claims = User.Claims.Select(c => new { c.Type, c.Value });
+
+            return Ok(claims);
         }
     }
 }
