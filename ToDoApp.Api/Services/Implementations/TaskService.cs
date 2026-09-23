@@ -31,7 +31,7 @@ namespace ToDoApp.Api.Services.Implementations
 
             if (string.IsNullOrWhiteSpace(taskItem.TaskDescription))
             {
-                return ServiceResult<TaskItem>.Fail("Task description cannot be empty", ServiceErrorType.ValidationFailed);
+                return ServiceResult<TaskItem>.Fail("Task description cannot be empty.", ServiceErrorType.ValidationFailed);
             }
 
             if (taskItem.TaskDescription.Length > 1000)
@@ -52,24 +52,32 @@ namespace ToDoApp.Api.Services.Implementations
 
             if (task is null)
             {
-                return ServiceResult<TaskItem>.Fail("Task not found", ServiceErrorType.NotFound);
+                return ServiceResult<TaskItem>.Fail("Task not found.", ServiceErrorType.NotFound);
             }
 
             if (task.UserId != userId)
             {
-                return ServiceResult<TaskItem>.Fail("Task not found", ServiceErrorType.NotFound);
+                return ServiceResult<TaskItem>.Fail("Task not found.", ServiceErrorType.NotFound);
             }
 
             if (string.IsNullOrWhiteSpace(taskItem.TaskDescription))
             {
-                return ServiceResult<TaskItem>.Fail("Task description cannot be empty", ServiceErrorType.ValidationFailed);
+                return ServiceResult<TaskItem>.Fail("Task description cannot be empty.", ServiceErrorType.ValidationFailed);
             }
 
             task.TaskDescription = taskItem.TaskDescription;
 
             task.IsCompleted = taskItem.IsCompleted;
 
-            await _appDbContext.SaveChangesAsync();
+            try 
+            {
+                await _appDbContext.SaveChangesAsync();
+            }
+            catch(DbUpdateConcurrencyException)
+            {
+                return ServiceResult<TaskItem>.Fail("Task was modified meanwhile.", ServiceErrorType.Conflict);
+            }
+
 
             return ServiceResult<TaskItem>.Ok(task);
         }
@@ -80,17 +88,24 @@ namespace ToDoApp.Api.Services.Implementations
 
             if (task is null)
             {
-                return ServiceResult.Fail("Task not found", ServiceErrorType.NotFound);
+                return ServiceResult.Fail("Task not found.", ServiceErrorType.NotFound);
             }
 
             if (task.UserId != userId)
             {
-                return ServiceResult.Fail("Task not found", ServiceErrorType.NotFound);
+                return ServiceResult.Fail("Task not found.", ServiceErrorType.NotFound);
             }
 
             _appDbContext.Tasks.Remove(task);
 
-            await _appDbContext.SaveChangesAsync();
+            try
+            {
+                await _appDbContext.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                return ServiceResult<TaskItem>.Fail("Task was modified meanwhile.", ServiceErrorType.Conflict);
+            }
 
             return ServiceResult.Ok();
         }

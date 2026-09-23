@@ -14,7 +14,9 @@ namespace ToDoApp.Api.Extensions
 
                 ServiceErrorType.ValidationFailed => controller.BadRequest(serviceResult.ErrorMessage),
 
-                _ => throw new InvalidOperationException($"Unhandled ServiceErrorType: {serviceResult.ErrorMessage}")
+                ServiceErrorType.Conflict => controller.Conflict(serviceResult.ErrorMessage),
+
+                _ => throw new InvalidOperationException($"Unhandled ServiceErrorType: {serviceResult.ErrorType}")
             };
         }
     }

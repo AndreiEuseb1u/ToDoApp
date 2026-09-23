@@ -4,6 +4,7 @@
     {
         None,
         NotFound,
-        ValidationFailed
+        ValidationFailed,
+        Conflict
     }
 }

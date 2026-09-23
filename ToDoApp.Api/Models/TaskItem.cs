@@ -6,9 +6,12 @@ namespace ToDoApp.Api.Models
     {
         public int TaskItemId { get; set; }
         public Guid UserId { get; set; }
-        
+
         [MaxLength(1000)]
         public string TaskDescription { get; set; } = string.Empty;
         public bool IsCompleted { get; set; }
+
+        [Timestamp]
+        public byte[] RowVersion { get; set; } = [];
     }
 }
