@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging.Abstractions;
 using ToDoApp.Api.Common;
 using ToDoApp.Api.Data;
 using ToDoApp.Api.Models;
@@ -15,7 +16,7 @@ namespace ToDoApp.Api.Tests.Unit.Services
         public TaskServiceTests()
         {
             _database = InMemoryDbContextFactory.Create();
-            _sut = new TaskService(_database);
+            _sut = new TaskService(_database, NullLogger<TaskService>.Instance);
         }
 
         private async Task<TaskItem> CreateExistingTaskAsync()

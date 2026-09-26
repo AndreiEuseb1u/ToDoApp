@@ -7,7 +7,7 @@ namespace ToDoApp.Services.Interfaces
 {
     public interface ITaskApiService
     {
-        Task<List<TaskItem>> GetTasksAsync(Guid id);
+        Task<List<TaskItem>> GetTasksAsync();
         Task<TaskItem?> PostTaskAsync(TaskItem taskItem);
         Task PutTaskAsync(int id, TaskItem taskItem);
         Task DeleteTaskAsync(int id);

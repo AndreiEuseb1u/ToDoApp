@@ -9,10 +9,12 @@ namespace ToDoApp.Api.Services.Implementations
     public class TaskService : ITaskService
     {
         private readonly AppDbContext _appDbContext;
+        private readonly ILogger<TaskService> _logger;
 
-        public TaskService(AppDbContext appDbContext)
+        public TaskService(AppDbContext appDbContext, ILogger<TaskService> logger)
         {
             _appDbContext = appDbContext;
+            _logger = logger;
         }
 
         public async Task<ServiceResult<List<TaskItem>>> GetTasks(Guid userId)

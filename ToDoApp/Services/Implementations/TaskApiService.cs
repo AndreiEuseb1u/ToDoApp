@@ -29,11 +29,11 @@ namespace ToDoApp.Services.Implementations
             }
         }
 
-        public async Task<List<TaskItem>> GetTasksAsync(Guid id)
+        public async Task<List<TaskItem>> GetTasksAsync()
         {
             AttachToken();
 
-            var tasks = await _httpClient.GetFromJsonAsync<List<TaskItem>>($"Tasks?userId={id}");
+            var tasks = await _httpClient.GetFromJsonAsync<List<TaskItem>>("Tasks");
 
             return tasks ?? new List<TaskItem>();
         }

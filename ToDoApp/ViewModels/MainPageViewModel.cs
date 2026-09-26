@@ -60,7 +60,7 @@ public partial class MainPageViewModel : ObservableObject
 
         if (userId is null) return;
 
-        var tasks = await _taskApiService.GetTasksAsync(userId.Value);
+        var tasks = await _taskApiService.GetTasksAsync();
 
         TaskList.Clear();
 
