@@ -17,7 +17,7 @@ public partial class TaskItem : ObservableObject
     private bool _isCompleted;
 
     [ObservableProperty]
-    private byte[] _rowVersion = [];
+    private uint _rowVersion;
 
     public string CheckboxIconSource => IsCompleted ? "solar_check_square_bold_24px.png" : "solar_check_square_linear_24px.png";
 }

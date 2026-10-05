@@ -106,9 +106,24 @@ public partial class MainPageViewModel : ObservableObject
         }
         else
         {
-            TaskBeingEdited.TaskDescription = NewTaskDescription;
+            var updatedCopy = new TaskItem 
+            { 
+                TaskItemId = TaskBeingEdited.TaskItemId, 
+                UserId = TaskBeingEdited.UserId,
+                IsCompleted = TaskBeingEdited.IsCompleted,
+                RowVersion = TaskBeingEdited.RowVersion,
+                TaskDescription = NewTaskDescription
+            };
 
-            await _taskApiService.PutTaskAsync(TaskBeingEdited.TaskItemId, TaskBeingEdited);
+            var result = await _taskApiService.PutTaskAsync(updatedCopy.TaskItemId, updatedCopy);
+
+            if (result.Success is false)
+            {
+                return;
+            }
+
+            TaskBeingEdited.TaskDescription = result.Data!.TaskDescription;
+            TaskBeingEdited.RowVersion = result.Data.RowVersion;
 
             TaskBeingEdited = null;
         }
@@ -126,7 +141,12 @@ public partial class MainPageViewModel : ObservableObject
             return;
         }
 
-        await _taskApiService.DeleteTaskAsync(taskItem.TaskItemId);
+        var result = await _taskApiService.DeleteTaskAsync(taskItem.TaskItemId, taskItem.RowVersion);
+
+        if (result.Success is false)
+        {
+            return;
+        }
 
         TaskList.Remove(taskItem);
     }
@@ -139,9 +159,25 @@ public partial class MainPageViewModel : ObservableObject
             return;
         }
 
-        taskItem.IsCompleted = !taskItem.IsCompleted;
+        var updatedCopy = new TaskItem
+        {
+            TaskItemId = taskItem.TaskItemId,
+            UserId = taskItem.UserId,
+            IsCompleted = !taskItem.IsCompleted,
+            RowVersion = taskItem.RowVersion,
+            TaskDescription = taskItem.TaskDescription
+        };
 
-        await _taskApiService.PutTaskAsync(taskItem.TaskItemId, taskItem);
+        var result = await _taskApiService.PutTaskAsync(updatedCopy.TaskItemId, updatedCopy);
+
+        if (result.Success is false)
+        {
+            return;
+        }
+
+        taskItem.IsCompleted = result.Data!.IsCompleted;
+        taskItem.RowVersion = result.Data.RowVersion;
+
     }
 
     [RelayCommand]

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Net.Http.Json;
 using System.Text;
+using ToDoApp.Common;
 using ToDoApp.Models;
 using ToDoApp.Services.Interfaces;
 
@@ -54,18 +55,35 @@ namespace ToDoApp.Services.Implementations
             return createdTask;
         }
 
-        public async Task PutTaskAsync(int id, TaskItem taskItem)
+        public async Task<ApiResult<TaskItem>> PutTaskAsync(int id, TaskItem taskItem)
         {
             AttachToken();
 
-            await _httpClient.PutAsJsonAsync($"Tasks/{id}", taskItem);
+            var response = await _httpClient.PutAsJsonAsync($"Tasks/{id}", taskItem);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var updatedTask = await response.Content.ReadFromJsonAsync<TaskItem>();
+                return ApiResult<TaskItem>.Ok(updatedTask!);
+            }
+
+            var errorMessage = await response.Content.ReadAsStringAsync();
+            return ApiResult<TaskItem>.Fail(errorMessage);
         }
 
-        public async Task DeleteTaskAsync(int id)
+        public async Task<ApiResult> DeleteTaskAsync(int id, uint rowVersion)
         {
             AttachToken();
 
-            await _httpClient.DeleteAsync($"Tasks/{id}");
+            var response = await _httpClient.DeleteAsync($"Tasks/{id}?rowVersion={rowVersion}");
+
+            if (response.IsSuccessStatusCode)
+            {
+                return ApiResult.Ok();
+            }
+
+            var errorMessage = await response.Content.ReadAsStringAsync();
+            return ApiResult.Fail(errorMessage);
         }
     }
 }
