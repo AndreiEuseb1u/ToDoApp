@@ -75,14 +75,14 @@ namespace ToDoApp.Api.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult> DeleteTask(int id)
+        public async Task<ActionResult> DeleteTask(int id, uint rowVersion)
         {
             if (this.TryGetUserId(out var userId) is false)
             {
                 return Unauthorized("Could not determine the current user.");
             }
 
-            var result = await _taskService.DeleteTask(id, userId);
+            var result = await _taskService.DeleteTask(id, userId, rowVersion);
 
             if (result.Success is false)
             {

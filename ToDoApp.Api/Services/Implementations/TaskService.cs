@@ -67,6 +67,8 @@ namespace ToDoApp.Api.Services.Implementations
                 return ServiceResult<TaskItem>.Fail("Task description cannot be empty.", ServiceErrorType.ValidationFailed);
             }
 
+            _appDbContext.Entry(task).Property(t => t.RowVersion).OriginalValue = taskItem.RowVersion;
+
             task.TaskDescription = taskItem.TaskDescription;
 
             task.IsCompleted = taskItem.IsCompleted;
@@ -77,6 +79,8 @@ namespace ToDoApp.Api.Services.Implementations
             }
             catch(DbUpdateConcurrencyException)
             {
+                _logger.LogWarning("Task {TaskId} was already updated by someone else. " +
+                    "The save attempt by user {UserId} was rejected to avoid overwriting their changes.", id, userId);
                 return ServiceResult<TaskItem>.Fail("Task was modified meanwhile.", ServiceErrorType.Conflict);
             }
 
@@ -84,7 +88,7 @@ namespace ToDoApp.Api.Services.Implementations
             return ServiceResult<TaskItem>.Ok(task);
         }
 
-        public async Task<ServiceResult> DeleteTask(int id, Guid userId)
+        public async Task<ServiceResult> DeleteTask(int id, Guid userId, uint rowVersion)
         {
             var task = await _appDbContext.Tasks.FindAsync(id);
 
@@ -98,6 +102,8 @@ namespace ToDoApp.Api.Services.Implementations
                 return ServiceResult.Fail("Task not found.", ServiceErrorType.NotFound);
             }
 
+            _appDbContext.Entry(task).Property(t => t.RowVersion).OriginalValue = rowVersion;
+
             _appDbContext.Tasks.Remove(task);
 
             try
@@ -106,6 +112,8 @@ namespace ToDoApp.Api.Services.Implementations
             }
             catch (DbUpdateConcurrencyException)
             {
+                _logger.LogWarning("Task {TaskId} was already updated by someone else. " +
+                    "The delete attempt by user {UserId} was rejected to avoid discarding their changes.", id, userId);
                 return ServiceResult<TaskItem>.Fail("Task was modified meanwhile.", ServiceErrorType.Conflict);
             }
 

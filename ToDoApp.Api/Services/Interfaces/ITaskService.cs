@@ -9,6 +9,6 @@ namespace ToDoApp.Api.Services.Interfaces
         Task<ServiceResult<List<TaskItem>>> GetTasks(Guid userId);
         Task<ServiceResult<TaskItem>> PostTask(TaskItem taskItem);
         Task<ServiceResult<TaskItem>> ModifyTask(int id, TaskItem taskItem, Guid userId);
-        Task<ServiceResult> DeleteTask(int id, Guid userId);
+        Task<ServiceResult> DeleteTask(int id, Guid userId, uint rowVersion);
     }
 }

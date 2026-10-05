@@ -210,7 +210,7 @@ namespace ToDoApp.Api.Tests.Unit.Services
             var existingTask = await CreateExistingTaskAsync();
 
             //Act
-            var actual = await _sut.DeleteTask(existingTask.TaskItemId, existingTask.UserId);
+            var actual = await _sut.DeleteTask(existingTask.TaskItemId, existingTask.UserId, existingTask.RowVersion);
 
             //Assert
             Assert.Multiple(
@@ -227,7 +227,7 @@ namespace ToDoApp.Api.Tests.Unit.Services
             var nonExistentId = existingTask.TaskItemId + 1;
 
             //Act
-            var actual = await _sut.DeleteTask(nonExistentId, existingTask.UserId);
+            var actual = await _sut.DeleteTask(nonExistentId, existingTask.UserId, existingTask.RowVersion);
 
             //Assert
             Assert.Multiple(
@@ -245,7 +245,7 @@ namespace ToDoApp.Api.Tests.Unit.Services
             var anotherUserId = Guid.NewGuid();
 
             //Act
-            var actual = await _sut.DeleteTask(existingTask.TaskItemId, anotherUserId);
+            var actual = await _sut.DeleteTask(existingTask.TaskItemId, anotherUserId, existingTask.RowVersion);
 
             //Assert
             Assert.Multiple(
