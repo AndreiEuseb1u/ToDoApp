@@ -19,20 +19,20 @@ namespace ToDoApp.Api.Data.Migrations
                 oldClrType: typeof(string),
                 oldType: "text");
 
-            migrationBuilder.AddColumn<byte[]>(
-                name: "RowVersion",
+            migrationBuilder.AddColumn<uint>(
+                name: "xmin",
                 table: "Tasks",
-                type: "bytea",
+                type: "xid",
                 rowVersion: true,
                 nullable: false,
-                defaultValue: new byte[0]);
+                defaultValue: 0u);
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(
-                name: "RowVersion",
+                name: "xmin",
                 table: "Tasks");
 
             migrationBuilder.AlterColumn<string>(

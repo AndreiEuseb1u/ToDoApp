@@ -12,7 +12,7 @@ using ToDoApp.Api.Data;
 namespace ToDoApp.Api.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260918160715_AddRowVersionToTaskItem")]
+    [Migration("20261002172004_AddRowVersionToTaskItem")]
     partial class AddRowVersionToTaskItem
     {
         /// <inheritdoc />
@@ -36,11 +36,11 @@ namespace ToDoApp.Api.Data.Migrations
                     b.Property<bool>("IsCompleted")
                         .HasColumnType("boolean");
 
-                    b.Property<byte[]>("RowVersion")
+                    b.Property<uint>("RowVersion")
                         .IsConcurrencyToken()
-                        .IsRequired()
                         .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("bytea");
+                        .HasColumnType("xid")
+                        .HasColumnName("xmin");
 
                     b.Property<string>("TaskDescription")
                         .IsRequired()

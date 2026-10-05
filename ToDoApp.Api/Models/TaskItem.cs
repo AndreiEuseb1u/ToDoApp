@@ -12,6 +12,6 @@ namespace ToDoApp.Api.Models
         public bool IsCompleted { get; set; }
 
         [Timestamp]
-        public byte[] RowVersion { get; set; } = [];
+        public uint RowVersion { get; set; }
     }
 }
