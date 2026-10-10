@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Logging.Abstractions;
 using ToDoApp.Api.Common;
 using ToDoApp.Api.Data;
+using ToDoApp.Api.Dtos;
 using ToDoApp.Api.Models;
 using ToDoApp.Api.Services.Implementations;
 using ToDoApp.Api.Tests.Helpers;
@@ -40,10 +41,10 @@ namespace ToDoApp.Api.Tests.Unit.Services
             await _database.Tasks.AddAsync(new TaskItem { TaskDescription = "user2 task", UserId = anotherUserId });
             await _database.SaveChangesAsync();
 
-            //Act
+            // Act
             var actual = await _sut.GetTasks(userId);
 
-            //Assert
+            // Assert
             Assert.Multiple(
                 () => Assert.All(actual.Data!, t => Assert.Equal(userId, t.UserId)),
                 () => Assert.Single(actual.Data!)
@@ -57,10 +58,10 @@ namespace ToDoApp.Api.Tests.Unit.Services
             const string description = "test description";
             var userId = Guid.NewGuid();
 
-            //Act
-            var actual = await _sut.PostTask(new TaskItem { TaskDescription = description, UserId = userId });
+            // Act
+            var actual = await _sut.PostTask(new CreateTaskRequest(description), userId);
 
-            //Assert
+            // Assert
             var savedTask = Assert.Single(await _database.Tasks.ToListAsync());
 
             Assert.Multiple(
@@ -78,10 +79,13 @@ namespace ToDoApp.Api.Tests.Unit.Services
         [InlineData(" ")]
         public async Task PostTask_InvalidDescription_ReturnsFailure(string description)
         {
-            //Act
-            var actual = await _sut.PostTask(new TaskItem { TaskDescription = description });
+            // Arrange
+            var userId = Guid.NewGuid();
 
-            //Assert
+            // Act
+            var actual = await _sut.PostTask(new CreateTaskRequest(description), userId);
+
+            // Assert
             Assert.Multiple(
                 () => Assert.False(actual.Success),
                 () => Assert.Equal(ServiceErrorType.ValidationFailed, actual.ErrorType),
@@ -94,9 +98,10 @@ namespace ToDoApp.Api.Tests.Unit.Services
         {
             // Arrange
             var longDescription = new string('a', 1001);
+            var userId = Guid.NewGuid();
 
             // Act
-            var actual = await _sut.PostTask(new TaskItem { TaskDescription = longDescription, UserId = Guid.NewGuid() });
+            var actual = await _sut.PostTask(new CreateTaskRequest(longDescription), userId);
 
             // Assert
             Assert.Multiple(
@@ -113,10 +118,10 @@ namespace ToDoApp.Api.Tests.Unit.Services
             const string description = "test description";
             var userId = Guid.Empty;
 
-            //Act
-            var actual = await _sut.PostTask(new TaskItem { TaskDescription = description, UserId = userId });
+            // Act
+            var actual = await _sut.PostTask(new CreateTaskRequest(description), userId);
 
-            //Assert
+            // Assert
             Assert.Multiple(
                 () => Assert.False(actual.Success),
                 () => Assert.Equal(ServiceErrorType.ValidationFailed, actual.ErrorType),
@@ -127,14 +132,14 @@ namespace ToDoApp.Api.Tests.Unit.Services
         [Fact]
         public async Task ModifyTask_ValidUpdate_ReturnsSuccess()
         {
-            //Arrange
+            // Arrange
             var existingTask = await CreateExistingTaskAsync();
             const string updatedDescription = "updated";
 
-            //Act
-            var actual = await _sut.ModifyTask(existingTask.TaskItemId, new TaskItem { TaskDescription = updatedDescription }, existingTask.UserId);
+            // Act
+            var actual = await _sut.ModifyTask(existingTask.TaskItemId, new ModifyTaskRequest(updatedDescription, existingTask.IsCompleted, existingTask.RowVersion), existingTask.UserId);
 
-            //Assert
+            // Assert
             Assert.Multiple(
                 () => Assert.True(actual.Success),
                 () => Assert.Equal(updatedDescription, actual.Data!.TaskDescription)
@@ -144,15 +149,15 @@ namespace ToDoApp.Api.Tests.Unit.Services
         [Fact]
         public async Task ModifyTask_TaskNotFound_ReturnsFailure()
         {
-            //Arrange
+            // Arrange
             var existingTask = await CreateExistingTaskAsync();
             var nonExistentId = existingTask.TaskItemId + 1;
             const string updatedDescription = "updated";
 
-            //Act
-            var actual = await _sut.ModifyTask(nonExistentId, new TaskItem { TaskDescription = updatedDescription }, existingTask.UserId);
+            // Act
+            var actual = await _sut.ModifyTask(nonExistentId, new ModifyTaskRequest(updatedDescription, existingTask.IsCompleted, existingTask.RowVersion), existingTask.UserId);
 
-            //Assert
+            // Assert
             var task = await _database.Tasks.FindAsync(existingTask.TaskItemId);
 
             Assert.Multiple(
@@ -167,13 +172,13 @@ namespace ToDoApp.Api.Tests.Unit.Services
         [InlineData(" ")]
         public async Task ModifyTask_InvalidDescription_ReturnsFailure(string description)
         {
-            //Arrange
+            // Arrange
             var existingTask = await CreateExistingTaskAsync();
 
-            //Act
-            var actual = await _sut.ModifyTask(existingTask.TaskItemId, new TaskItem { TaskDescription = description }, existingTask.UserId);
+            // Act
+            var actual = await _sut.ModifyTask(existingTask.TaskItemId, new ModifyTaskRequest(description, existingTask.IsCompleted, existingTask.RowVersion), existingTask.UserId);
 
-            //Assert
+            // Assert
             var task = await _database.Tasks.FindAsync(existingTask.TaskItemId);
 
             Assert.Multiple(
@@ -189,11 +194,12 @@ namespace ToDoApp.Api.Tests.Unit.Services
             // Arrange
             var existingTask = await CreateExistingTaskAsync();
             var anotherUserId = Guid.NewGuid();
+            var description = "hacked";
 
             // Act
-            var actual = await _sut.ModifyTask(existingTask.TaskItemId, new TaskItem { TaskDescription = "hacked" }, anotherUserId);
+            var actual = await _sut.ModifyTask(existingTask.TaskItemId, new ModifyTaskRequest(description, existingTask.IsCompleted, existingTask.RowVersion), anotherUserId);
 
-            //Assert
+            // Assert
             var task = await _database.Tasks.FindAsync(existingTask.TaskItemId);
 
             Assert.Multiple(
@@ -206,13 +212,13 @@ namespace ToDoApp.Api.Tests.Unit.Services
         [Fact]
         public async Task DeleteTask_TaskFound_ReturnsSuccess()
         {
-            //Arrange
+            // Arrange
             var existingTask = await CreateExistingTaskAsync();
 
-            //Act
+            // Act
             var actual = await _sut.DeleteTask(existingTask.TaskItemId, existingTask.UserId, existingTask.RowVersion);
 
-            //Assert
+            // Assert
             Assert.Multiple(
                 () => Assert.True(actual.Success),
                 () => Assert.Empty(_database.Tasks.ToList())
@@ -222,14 +228,14 @@ namespace ToDoApp.Api.Tests.Unit.Services
         [Fact]
         public async Task DeleteTask_TaskNotFound_ReturnsFailure()
         {
-            //Arrange
+            // Arrange
             var existingTask = await CreateExistingTaskAsync();
             var nonExistentId = existingTask.TaskItemId + 1;
 
-            //Act
+            // Act
             var actual = await _sut.DeleteTask(nonExistentId, existingTask.UserId, existingTask.RowVersion);
 
-            //Assert
+            // Assert
             Assert.Multiple(
                 () => Assert.False(actual.Success),
                 () => Assert.Equal(ServiceErrorType.NotFound, actual.ErrorType),
@@ -240,14 +246,14 @@ namespace ToDoApp.Api.Tests.Unit.Services
         [Fact]
         public async Task DeleteTask_TaskBelongsToAnotherUser_ReturnsFailure()
         {
-            //Arrange
+            // Arrange
             var existingTask = await CreateExistingTaskAsync();
             var anotherUserId = Guid.NewGuid();
 
-            //Act
+            // Act
             var actual = await _sut.DeleteTask(existingTask.TaskItemId, anotherUserId, existingTask.RowVersion);
 
-            //Assert
+            // Assert
             Assert.Multiple(
                 () => Assert.False(actual.Success),
                 () => Assert.Equal(ServiceErrorType.NotFound, actual.ErrorType),

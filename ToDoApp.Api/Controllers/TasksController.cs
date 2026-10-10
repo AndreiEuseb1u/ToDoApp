@@ -8,6 +8,7 @@ using ToDoApp.Api.Services.Interfaces;
 using ToDoApp.Api.Common;
 using ToDoApp.Api.Extensions;
 using System.Security.Claims;
+using ToDoApp.Api.Dtos;
 
 namespace ToDoApp.Api.Controllers
 {
@@ -17,10 +18,12 @@ namespace ToDoApp.Api.Controllers
     public class TasksController : ControllerBase
     {
         private readonly ITaskService _taskService;
+        private readonly ILogger<TasksController> _logger;
 
-        public TasksController(ITaskService taskService)
+        public TasksController(ITaskService taskService, ILogger<TasksController> logger)
         {
             _taskService = taskService;
+            _logger = logger;
         }
 
         [HttpGet]
@@ -28,6 +31,7 @@ namespace ToDoApp.Api.Controllers
         {
             if (this.TryGetUserId(out var userId) is false)
             {
+                _logger.LogError("Could not determine the user id from the authenticated token in GetTasks. Request rejected.");
                 return Unauthorized("Could not determine the current user.");
             }
 
@@ -37,19 +41,18 @@ namespace ToDoApp.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<TaskItem>> PostTask([FromBody] TaskItem taskItem)
+        public async Task<ActionResult<TaskItem>> PostTask([FromBody] CreateTaskRequest request)
         {
             if (this.TryGetUserId(out var userId) is false)
             {
                 return Unauthorized("Could not determine the current user.");
             }
 
-            taskItem.UserId = userId;
-
-            var result = await _taskService.PostTask(taskItem);
+            var result = await _taskService.PostTask(request, userId);
 
             if (result.Success is false)
             {
+                _logger.LogError("Could not determine the user id from the authenticated token in PostTask. Request rejected.");
                 return result.ToErrorActionResult(this);
             }
 
@@ -57,14 +60,16 @@ namespace ToDoApp.Api.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult> ModifyTask(int id, [FromBody] TaskItem taskItem)
+        public async Task<ActionResult> ModifyTask(int id, [FromBody] ModifyTaskRequest request)
         {
             if (this.TryGetUserId(out var userId) is false)
             {
+                _logger.LogError("Could not determine the user id from the authenticated token in ModifyTask for task {TaskId}. " +
+                    "Request rejected.", id);
                 return Unauthorized("Could not determine the current user.");
             }
 
-            var result = await _taskService.ModifyTask(id, taskItem, userId);
+            var result = await _taskService.ModifyTask(id, request, userId);
 
             if (result.Success is false)
             {
@@ -79,6 +84,8 @@ namespace ToDoApp.Api.Controllers
         {
             if (this.TryGetUserId(out var userId) is false)
             {
+                _logger.LogError("Could not determine the user id from the authenticated token in DeleteTask for task {TaskId}. " +
+                    "Request rejected.", id);
                 return Unauthorized("Could not determine the current user.");
             }
 
