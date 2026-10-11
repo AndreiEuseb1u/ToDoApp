@@ -1,11 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Supabase.Gotrue;
-using Supabase.Gotrue.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using ToDoApp.Models;
 using ToDoApp.Services.Implementations;
 using ToDoApp.Services.Interfaces;
 

@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
-using ToDoApp.Api;
 using ToDoApp.Api.Data;
 using ToDoApp.Api.Services.Implementations;
 using ToDoApp.Api.Services.Interfaces;

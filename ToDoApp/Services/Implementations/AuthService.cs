@@ -1,8 +1,4 @@
-﻿using Supabase;
-using Supabase.Gotrue;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using Supabase.Gotrue;
 using ToDoApp.Common;
 using ToDoApp.Services.Interfaces;
 

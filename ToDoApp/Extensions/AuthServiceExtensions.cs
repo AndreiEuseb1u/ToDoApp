@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using ToDoApp.Services.Implementations;
-using ToDoApp.Services.Interfaces;
+﻿using ToDoApp.Services.Interfaces;
 
 namespace ToDoApp.Extensions
 {

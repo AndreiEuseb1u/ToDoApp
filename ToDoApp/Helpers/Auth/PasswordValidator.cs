@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace ToDoApp.Helpers.Auth
+﻿namespace ToDoApp.Helpers.Auth
 {
     public class PasswordValidator
     {

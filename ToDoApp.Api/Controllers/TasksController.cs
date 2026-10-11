@@ -1,13 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using ToDoApp.Api.Models;
-using ToDoApp.Api.Data;
-using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
 using ToDoApp.Api.Services.Interfaces;
-using ToDoApp.Api.Common;
 using ToDoApp.Api.Extensions;
-using System.Security.Claims;
 using ToDoApp.Api.Dtos;
 
 namespace ToDoApp.Api.Controllers
