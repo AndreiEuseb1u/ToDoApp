@@ -1,5 +1,6 @@
 ﻿using System.Net.Http.Json;
 using ToDoApp.Common;
+using ToDoApp.Dtos;
 using ToDoApp.Extensions;
 using ToDoApp.Models;
 using ToDoApp.Services.Interfaces;
@@ -81,13 +82,13 @@ namespace ToDoApp.Services.Implementations
             });
         }
 
-        public async Task<ApiResult<TaskItem>> PostTaskAsync(TaskItem taskItem)
+        public async Task<ApiResult<TaskItem>> PostTaskAsync(CreateTaskRequest request)
         {
             AttachToken();
 
             return await SendAsync(async () =>
             {
-                var response = await _httpClient.PostAsJsonAsync("Tasks", taskItem);
+                var response = await _httpClient.PostAsJsonAsync("Tasks", request);
 
                 if (response.IsSuccessStatusCode)
                 {
@@ -103,13 +104,13 @@ namespace ToDoApp.Services.Implementations
             });
         }
 
-        public async Task<ApiResult<TaskItem>> PutTaskAsync(int id, TaskItem taskItem)
+        public async Task<ApiResult<TaskItem>> PutTaskAsync(int id, ModifyTaskRequest request)
         {
             AttachToken();
 
             return await SendAsync(async () => 
             {
-                var response = await _httpClient.PutAsJsonAsync($"Tasks/{id}", taskItem);
+                var response = await _httpClient.PutAsJsonAsync($"Tasks/{id}", request);
 
                 if (response.IsSuccessStatusCode)
                 {

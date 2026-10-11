@@ -1,6 +1,8 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System.Collections.ObjectModel;
+using ToDoApp.Common;
+using ToDoApp.Dtos;
 using ToDoApp.Extensions;
 using ToDoApp.Models;
 using ToDoApp.Services.Interfaces;
@@ -59,11 +61,16 @@ public partial class MainPageViewModel : ObservableObject
 
         if (userId is null) return;
 
+        await RefreshTasksAsync();
+    }
+
+    private async Task<bool> RefreshTasksAsync()
+    {
         var result = await _taskApiService.GetTasksAsync();
 
         if (result.Success is false)
         {
-            return;
+            return false;
         }
 
         TaskList.Clear();
@@ -72,6 +79,35 @@ public partial class MainPageViewModel : ObservableObject
         {
             TaskList.Add(task);
         }
+
+        return true;
+    }
+
+    private async Task HandleFailureAsync(ApiResult result)
+    {
+        if (result.ErrorType is not (ApiErrorType.Conflict or ApiErrorType.NotFound))
+        {
+            return;
+        }
+
+        var refreshed = await RefreshTasksAsync();
+
+        if (refreshed is false || TaskBeingEdited is null)
+        {
+            return;
+        }
+
+        var refreshedTask = TaskList.FirstOrDefault(t => t.TaskItemId == TaskBeingEdited.TaskItemId);
+
+        if (refreshedTask is not null)
+        {
+            TaskBeingEdited = refreshedTask;
+            return;
+        }
+
+        TaskBeingEdited = null;
+        NewTaskDescription = string.Empty;
+        IsEntryVisible = false;
     }
 
     // === Commands ===
@@ -100,9 +136,9 @@ public partial class MainPageViewModel : ObservableObject
                 return; 
             }
 
-            var newTaskItem = new TaskItem { UserId = userId.Value, TaskDescription = NewTaskDescription };
+            var request = new CreateTaskRequest(NewTaskDescription);
 
-            var result = await _taskApiService.PostTaskAsync(newTaskItem);
+            var result = await _taskApiService.PostTaskAsync(request);
 
             if (result.Success is false)
             {
@@ -113,19 +149,16 @@ public partial class MainPageViewModel : ObservableObject
         }
         else
         {
-            var updatedCopy = new TaskItem 
-            { 
-                TaskItemId = TaskBeingEdited.TaskItemId, 
-                UserId = TaskBeingEdited.UserId,
-                IsCompleted = TaskBeingEdited.IsCompleted,
-                RowVersion = TaskBeingEdited.RowVersion,
-                TaskDescription = NewTaskDescription
-            };
+            var request = new ModifyTaskRequest(
+                NewTaskDescription,
+                TaskBeingEdited.IsCompleted,
+                TaskBeingEdited.RowVersion);
 
-            var result = await _taskApiService.PutTaskAsync(updatedCopy.TaskItemId, updatedCopy);
+            var result = await _taskApiService.PutTaskAsync(TaskBeingEdited.TaskItemId, request);
 
             if (result.Success is false)
             {
+                await HandleFailureAsync(result);
                 return;
             }
 
@@ -152,6 +185,7 @@ public partial class MainPageViewModel : ObservableObject
 
         if (result.Success is false)
         {
+            await HandleFailureAsync(result);
             return;
         }
 
@@ -166,19 +200,16 @@ public partial class MainPageViewModel : ObservableObject
             return;
         }
 
-        var updatedCopy = new TaskItem
-        {
-            TaskItemId = taskItem.TaskItemId,
-            UserId = taskItem.UserId,
-            IsCompleted = !taskItem.IsCompleted,
-            RowVersion = taskItem.RowVersion,
-            TaskDescription = taskItem.TaskDescription
-        };
+        var request = new ModifyTaskRequest(
+            taskItem.TaskDescription,
+            !taskItem.IsCompleted,
+            taskItem.RowVersion);
 
-        var result = await _taskApiService.PutTaskAsync(updatedCopy.TaskItemId, updatedCopy);
+        var result = await _taskApiService.PutTaskAsync(taskItem.TaskItemId, request);
 
         if (result.Success is false)
         {
+            await HandleFailureAsync(result);
             return;
         }
 
