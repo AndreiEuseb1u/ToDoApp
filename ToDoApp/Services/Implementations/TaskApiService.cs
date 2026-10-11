@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Net.Http.Json;
-using System.Text;
+﻿using System.Net.Http.Json;
 using ToDoApp.Common;
+using ToDoApp.Extensions;
 using ToDoApp.Models;
 using ToDoApp.Services.Interfaces;
 
@@ -12,11 +10,41 @@ namespace ToDoApp.Services.Implementations
     {
         private readonly HttpClient _httpClient;
         private readonly Supabase.Client _supabaseClient;
+        private const string NoResponseMessage = "Could not reach the server. Check your connection and try again.";
 
         public TaskApiService(HttpClient httpClient, Supabase.Client supabaseClient)
         {
             _httpClient = httpClient;
             _supabaseClient = supabaseClient;
+        }
+
+        private static bool IsNetworkFailure(Exception ex)
+        {
+            return ex is HttpRequestException or TaskCanceledException;
+        }
+
+        private static async Task<ApiResult> SendAsync(Func<Task<ApiResult>> request)
+        {
+            try
+            {
+                return await request();
+            }
+            catch (Exception ex) when (IsNetworkFailure(ex))
+            {
+                return ApiResult.Fail(NoResponseMessage, ApiErrorType.NoResponse);
+            }
+        }
+
+        private static async Task<ApiResult<T>> SendAsync<T>(Func<Task<ApiResult<T>>> request)
+        {
+            try
+            {
+                return await request();
+            }
+            catch (Exception ex) when (IsNetworkFailure(ex))
+            {
+                return ApiResult<T>.Fail(NoResponseMessage, ApiErrorType.NoResponse);
+            }
         }
 
         private void AttachToken()
@@ -30,60 +58,92 @@ namespace ToDoApp.Services.Implementations
             }
         }
 
-        public async Task<List<TaskItem>> GetTasksAsync()
+        public async Task<ApiResult<List<TaskItem>>> GetTasksAsync()
         {
             AttachToken();
 
-            var tasks = await _httpClient.GetFromJsonAsync<List<TaskItem>>("Tasks");
+            return await SendAsync(async () =>
+            {
+                var response = await _httpClient.GetAsync("Tasks");
 
-            return tasks ?? new List<TaskItem>();
+                if (response.IsSuccessStatusCode)
+                {
+                    var tasks = await response.Content.ReadFromJsonAsync<List<TaskItem>>();
+
+                    return ApiResult<List<TaskItem>>.Ok(tasks ?? new List<TaskItem>());
+                }
+
+                var errorMessage = await response.Content.ReadAsStringAsync();
+                var errorType = response.StatusCode.ToApiErrorType();
+
+                return ApiResult<List<TaskItem>>.Fail(errorMessage, errorType);
+
+            });
         }
 
-        public async Task<TaskItem?> PostTaskAsync(TaskItem taskItem)
+        public async Task<ApiResult<TaskItem>> PostTaskAsync(TaskItem taskItem)
         {
             AttachToken();
 
-            var response = await _httpClient.PostAsJsonAsync("Tasks", taskItem);
-
-            if (!response.IsSuccessStatusCode)
+            return await SendAsync(async () =>
             {
-                return null;
-            }
+                var response = await _httpClient.PostAsJsonAsync("Tasks", taskItem);
 
-            var createdTask = await response.Content.ReadFromJsonAsync<TaskItem>();
+                if (response.IsSuccessStatusCode)
+                {
+                    var createdTask = await response.Content.ReadFromJsonAsync<TaskItem>();
 
-            return createdTask;
+                    return ApiResult<TaskItem>.Ok(createdTask!);
+                }
+
+                var errorMessage = await response.Content.ReadAsStringAsync();
+                var errorType = response.StatusCode.ToApiErrorType();
+
+                return ApiResult<TaskItem>.Fail(errorMessage, errorType);
+            });
         }
 
         public async Task<ApiResult<TaskItem>> PutTaskAsync(int id, TaskItem taskItem)
         {
             AttachToken();
 
-            var response = await _httpClient.PutAsJsonAsync($"Tasks/{id}", taskItem);
-
-            if (response.IsSuccessStatusCode)
+            return await SendAsync(async () => 
             {
-                var updatedTask = await response.Content.ReadFromJsonAsync<TaskItem>();
-                return ApiResult<TaskItem>.Ok(updatedTask!);
-            }
+                var response = await _httpClient.PutAsJsonAsync($"Tasks/{id}", taskItem);
 
-            var errorMessage = await response.Content.ReadAsStringAsync();
-            return ApiResult<TaskItem>.Fail(errorMessage);
+                if (response.IsSuccessStatusCode)
+                {
+                    var updatedTask = await response.Content.ReadFromJsonAsync<TaskItem>();
+
+                    return ApiResult<TaskItem>.Ok(updatedTask!);
+                }
+
+                var errorMessage = await response.Content.ReadAsStringAsync();
+                var errorType = response.StatusCode.ToApiErrorType();
+
+                return ApiResult<TaskItem>.Fail(errorMessage, errorType);
+            });
+
         }
 
         public async Task<ApiResult> DeleteTaskAsync(int id, uint rowVersion)
         {
             AttachToken();
 
-            var response = await _httpClient.DeleteAsync($"Tasks/{id}?rowVersion={rowVersion}");
-
-            if (response.IsSuccessStatusCode)
+            return await SendAsync(async() =>
             {
-                return ApiResult.Ok();
-            }
+                var response = await _httpClient.DeleteAsync($"Tasks/{id}?rowVersion={rowVersion}");
 
-            var errorMessage = await response.Content.ReadAsStringAsync();
-            return ApiResult.Fail(errorMessage);
+                if (response.IsSuccessStatusCode)
+                {
+                    return ApiResult.Ok();
+                }
+
+                var errorMessage = await response.Content.ReadAsStringAsync();
+                var errorType = response.StatusCode.ToApiErrorType();
+
+                return ApiResult.Fail(errorMessage, errorType);
+            });
         }
     }
 }

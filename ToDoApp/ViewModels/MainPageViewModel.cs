@@ -1,6 +1,5 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Microsoft.Maui.Graphics;
 using System.Collections.ObjectModel;
 using ToDoApp.Extensions;
 using ToDoApp.Models;
@@ -60,11 +59,16 @@ public partial class MainPageViewModel : ObservableObject
 
         if (userId is null) return;
 
-        var tasks = await _taskApiService.GetTasksAsync();
+        var result = await _taskApiService.GetTasksAsync();
+
+        if (result.Success is false)
+        {
+            return;
+        }
 
         TaskList.Clear();
 
-        foreach (var task in tasks)
+        foreach (var task in result.Data!)
         {
             TaskList.Add(task);
         }
@@ -91,18 +95,21 @@ public partial class MainPageViewModel : ObservableObject
         {
             var userId = await _authService.GetUserIdOrRedirectAsync();
 
-            if (userId is null) return;
+            if (userId is null) 
+            { 
+                return; 
+            }
 
             var newTaskItem = new TaskItem { UserId = userId.Value, TaskDescription = NewTaskDescription };
 
-            var createdTask = await _taskApiService.PostTaskAsync(newTaskItem);
+            var result = await _taskApiService.PostTaskAsync(newTaskItem);
 
-            if (createdTask is null)
+            if (result.Success is false)
             {
                 return;
             }
 
-            TaskList.Add(createdTask);
+            TaskList.Add(result.Data!);
         }
         else
         {
