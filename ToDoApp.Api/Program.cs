@@ -7,12 +7,22 @@ using ToDoApp.Api.Services.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var connectionString = builder.Configuration.GetConnectionString("Default");
+var connectionString = builder.Configuration.GetConnectionString("Default")
+    ?? throw new InvalidOperationException("Connection string 'Default' is not configured.");
 
 builder.Host.UseSerilog((context, configuration) =>
-    configuration
-    .WriteTo.Console()
-    .WriteTo.Seq("http://localhost:5341"));
+    {
+        configuration.WriteTo.Console();
+
+        var seqUrl = context.Configuration["Seq:ServerUrl"];
+
+        if (string.IsNullOrWhiteSpace(seqUrl) is false)
+        {
+            configuration.WriteTo.Seq(seqUrl);
+        }
+    });
+
+
 
 builder.Services.AddControllers();
 
@@ -48,8 +58,6 @@ app.Use(async (context, next) =>
 app.UseAuthentication();
 
 app.UseAuthorization();
-
-app.UseHttpsRedirection();
 
 app.MapControllers();
 
