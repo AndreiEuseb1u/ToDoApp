@@ -361,3 +361,15 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+
+# Android signing keys: never commit
+*.keystore
+*.jks
+
+# Android packages: these go to GitHub Releases, not into the repository
+*.apk
+*.aab
+
+# Local environment files (may contain connection strings)
+.env
+*.env
