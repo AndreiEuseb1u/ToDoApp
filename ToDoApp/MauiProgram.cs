@@ -38,11 +38,18 @@ namespace ToDoApp
 #if DEBUG
             builder.Logging.AddDebug();
 #endif
+
+#if DEBUG
+            const string apiBaseUrl = "http://10.0.2.2:5246/";
+#else
+            const string apiBaseUrl = "https://todoapp-api-1g3p.onrender.com/";
+#endif
+
             builder.Services.AddSingleton<SessionPersistenceService>();
 
             builder.Services.AddSingleton(sp => new HttpClient
             {
-                BaseAddress = new Uri("http://10.0.2.2:5246/")
+                BaseAddress = new Uri(apiBaseUrl)
             });
 
             builder.Services.AddSingleton(sp =>
