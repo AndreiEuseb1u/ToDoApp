@@ -17,6 +17,15 @@ public partial class MainPageViewModel : ObservableObject
     public ObservableCollection<TaskItem> TaskList { get; } = new();
 
     [ObservableProperty]
+    private bool _isBusy;
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(HasError))]
+    private string _errorMessage = string.Empty;
+
+    public bool HasError => !string.IsNullOrEmpty(ErrorMessage);
+
+    [ObservableProperty]
     private string _newTaskDescription = string.Empty;
 
     [ObservableProperty]
@@ -66,7 +75,7 @@ public partial class MainPageViewModel : ObservableObject
 
     private async Task<bool> RefreshTasksAsync()
     {
-        var result = await _taskApiService.GetTasksAsync();
+        var result = await RunBusyAsync(() => _taskApiService.GetTasksAsync());
 
         if (result.Success is false)
         {
@@ -110,6 +119,28 @@ public partial class MainPageViewModel : ObservableObject
         IsEntryVisible = false;
     }
 
+    private async Task<TResult> RunBusyAsync<TResult>(Func<Task<TResult>> operation) where TResult : ApiResult
+    {
+        IsBusy = true;
+        ErrorMessage = string.Empty;
+
+        try
+        {
+            var result = await operation();
+
+            if (result.ErrorType is ApiErrorType.NoResponse)
+            {
+                ErrorMessage = result.ErrorMessage ?? string.Empty;
+            }
+
+            return result;
+        }
+        finally
+        {
+            IsBusy = false;
+        }
+    }
+
     // === Commands ===
 
     [RelayCommand]
@@ -138,7 +169,7 @@ public partial class MainPageViewModel : ObservableObject
 
             var request = new CreateTaskRequest(NewTaskDescription);
 
-            var result = await _taskApiService.PostTaskAsync(request);
+            var result = await RunBusyAsync(() => _taskApiService.PostTaskAsync(request));
 
             if (result.Success is false)
             {
@@ -154,7 +185,7 @@ public partial class MainPageViewModel : ObservableObject
                 TaskBeingEdited.IsCompleted,
                 TaskBeingEdited.RowVersion);
 
-            var result = await _taskApiService.PutTaskAsync(TaskBeingEdited.TaskItemId, request);
+            var result = await RunBusyAsync(() => _taskApiService.PutTaskAsync(TaskBeingEdited.TaskItemId, request));
 
             if (result.Success is false)
             {
@@ -181,7 +212,7 @@ public partial class MainPageViewModel : ObservableObject
             return;
         }
 
-        var result = await _taskApiService.DeleteTaskAsync(taskItem.TaskItemId, taskItem.RowVersion);
+        var result = await RunBusyAsync(() => _taskApiService.DeleteTaskAsync(taskItem.TaskItemId, taskItem.RowVersion));
 
         if (result.Success is false)
         {
@@ -205,7 +236,7 @@ public partial class MainPageViewModel : ObservableObject
             !taskItem.IsCompleted,
             taskItem.RowVersion);
 
-        var result = await _taskApiService.PutTaskAsync(taskItem.TaskItemId, request);
+        var result = await RunBusyAsync(() => _taskApiService.PutTaskAsync(taskItem.TaskItemId, request));
 
         if (result.Success is false)
         {

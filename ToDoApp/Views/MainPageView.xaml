@@ -6,16 +6,16 @@
 
     <Grid>
 
-        <!-- Grid / Similar to Absolute Layout -->
-
-        <!-- Scroll View -->
+        <!-- ===================================================================== -->
+        <!-- ===== LAYER 1: SCROLLABLE CONTENT                                   ===== -->
+        <!-- ===================================================================== -->
 
         <ScrollView Orientation="Vertical">
 
             <VerticalStackLayout Padding="16,10"
                                  Spacing="12">
 
-                <!-- Footer Grid Template -->
+                <!-- ~~~ HEADER: greeting and settings icon ~~~ -->
 
                 <Grid Padding="0,0" 
                     Margin="0,0,0,20">
@@ -26,14 +26,12 @@
                         <RowDefinition Height="Auto"></RowDefinition>
                     </Grid.RowDefinitions>
 
-                    <!-- Grid Template -->
+                    <!-- Column Template -->
 
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"></ColumnDefinition>
                         <ColumnDefinition Width="*"></ColumnDefinition>
                     </Grid.ColumnDefinitions>
-
-                    <!-- Footer -->
 
                     <!-- Username Greeting -->
 
@@ -62,6 +60,10 @@
 
                 </Grid>
 
+                <!-- ~~~ END HEADER ~~~ -->
+
+                <!-- ~~~ SEARCH BAR (placeholder, not functional yet) ~~~ -->
+
                 <Border Style="{StaticResource SearchForTaskBorder}">
                     <HorizontalStackLayout Padding="18, 0, 18, 0"
                                            Spacing="12">
@@ -76,6 +78,10 @@
                     </HorizontalStackLayout>
                 </Border>
 
+                <!-- ~~~ END SEARCH BAR ~~~ -->
+
+                <!-- ~~~ PROGRESS CARD: "Today's Progress" ~~~ -->
+
                 <Border Style="{StaticResource TasksProgressBorder}">
 
                     <Grid>
@@ -87,7 +93,7 @@
                             <RowDefinition Height="*"></RowDefinition>
                         </Grid.RowDefinitions>
 
-                        <!-- Column Tempalte -->
+                        <!-- Column Template -->
 
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="6*"></ColumnDefinition>
@@ -111,7 +117,29 @@
 
                 </Border>
 
-                <!-- Task Collection -->
+                <!-- ~~~ END PROGRESS CARD ~~~ -->
+
+                <!-- ~~~ LOADING AND ERROR FEEDBACK ~~~ -->
+                <!-- Bound to IsBusy / HasError / ErrorMessage in MainPageViewModel -->
+
+                <!-- Spinner, visible while a request to the server is running -->
+                <ActivityIndicator IsRunning="{Binding IsBusy}"
+                                   IsVisible="{Binding IsBusy}" />
+
+                <!-- Hint, visible only while a request is running (a free-tier server can take a while to wake up) -->
+                <Label Text="Connecting to the server. The first request can take a while."
+                       IsVisible="{Binding IsBusy}"
+                       TextColor="{StaticResource TextMuted}"
+                       FontSize="Caption" />
+
+                <!-- Error text, visible only when ErrorMessage is not empty -->
+                <Label Text="{Binding ErrorMessage}"
+                       IsVisible="{Binding HasError}"
+                       TextColor="Red" />
+
+                <!-- ~~~ END LOADING AND ERROR FEEDBACK ~~~ -->
+
+                <!-- ~~~ TASK LIST ~~~ -->
 
                 <CollectionView x:Name="TaskView" 
                                 ItemsSource="{Binding TaskList}">
@@ -122,15 +150,17 @@
                         <LinearItemsLayout Orientation="Vertical" ItemSpacing="10"/>
                     </CollectionView.ItemsLayout>
 
-                    <!-- Item Template -->
+                    <!-- Item Template: how ONE task is drawn -->
 
                     <CollectionView.ItemTemplate>
 
                         <DataTemplate>
 
-                            <!-- SwipeView wrapper pentru fiecare task -->
+                            <!-- SwipeView wrapper for every task (swipe left to delete) -->
 
                             <SwipeView>
+
+                                <!-- Swipe action: Delete -->
 
                                 <SwipeView.RightItems>
                                     <SwipeItems>
@@ -141,7 +171,7 @@
                                     </SwipeItems>
                                 </SwipeView.RightItems>
 
-                                <!-- Task Border -->
+                                <!-- Task Border: tap anywhere on the row to edit the description -->
 
                                 <Border Style="{StaticResource TaskBorderUnchecked}">
 
@@ -152,7 +182,7 @@
 
                                     <HorizontalStackLayout Spacing="20">
 
-                                        <!-- Task Status Icon (Done / Undone) -->
+                                        <!-- Task Status Icon (Done / Undone): tap to toggle -->
 
                                         <Image Source="{Binding CheckboxIconSource}" 
                                                VerticalOptions="Center">
@@ -183,20 +213,24 @@
 
                 </CollectionView>
 
+                <!-- ~~~ END TASK LIST ~~~ -->
+
             </VerticalStackLayout>
 
         </ScrollView>
 
-        <!-- Add Task Button -->
+        <!-- ===== END LAYER 1 ===== -->
 
-        <!-- Add Task Button Icon -->
+        <!-- ===================================================================== -->
+        <!-- ===== LAYER 2: FLOATING ADD BUTTON (bottom right)                   ===== -->
+        <!-- ===================================================================== -->
 
         <Image Source="solar_add_circle_bold_96px.png"
                VerticalOptions="End"
                HorizontalOptions="End"
                Margin="16,0">
 
-            <!-- Add Task Button Gesture Recognizer -->
+            <!-- Add Task Button Gesture Recognizer: opens the entry panel -->
 
             <Image.GestureRecognizers>
                 <TapGestureRecognizer Command="{Binding ShowAddOrModifyTaskCommand}"/>
@@ -204,15 +238,17 @@
 
         </Image>
 
-        <!-- Entry Border -->
+        <!-- ===== END LAYER 2 ===== -->
+
+        <!-- ===================================================================== -->
+        <!-- ===== LAYER 3: TASK ENTRY PANEL (add or edit a task)                ===== -->
+        <!-- ===================================================================== -->
 
         <Border x:Name="EntryBorder"
                 Style="{StaticResource TaskEntryBorder}"
                 IsVisible="{Binding IsEntryVisible}">
 
             <Grid>
-
-                <!-- Grid Template -->
 
                 <!-- Row Template -->
 
@@ -221,14 +257,14 @@
                     <RowDefinition Height="*"></RowDefinition>
                 </Grid.RowDefinitions>
 
-                <!-- Column Tempalte -->
+                <!-- Column Template -->
 
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="5*"></ColumnDefinition>
                     <ColumnDefinition Width="5*"></ColumnDefinition>
                 </Grid.ColumnDefinitions>
 
-                <!-- Task Description Entry-->
+                <!-- ~~~ ENTRY ROW: icon and text field ~~~ -->
 
                 <HorizontalStackLayout Grid.Row="0"
                                        Grid.Column="0"
@@ -240,7 +276,7 @@
                     <Image Source="solar_check_square_linear_24px.png"
                            VerticalOptions="Center"/>
 
-                    <!-- Task Description Entry Entry -->
+                    <!-- Task Description Entry -->
 
                     <Entry x:Name="OnEntryAdd"
                            Text="{Binding NewTaskDescription, Mode=TwoWay}"
@@ -253,7 +289,9 @@
 
                 </HorizontalStackLayout>
 
-                <!-- Task Reminder Button -->
+                <!-- ~~~ END ENTRY ROW ~~~ -->
+
+                <!-- ~~~ REMINDER BUTTON (not functional yet) ~~~ -->
 
                 <Border Style="{StaticResource TaskReminderBorder}"
                         Grid.Row="1"
@@ -279,9 +317,9 @@
 
                 </Border>
 
-                <!-- Done Button -->
+                <!-- ~~~ END REMINDER BUTTON ~~~ -->
 
-                <!-- Done Button Label -->
+                <!-- ~~~ DONE BUTTON: saves the task (create or edit) ~~~ -->
 
                 <Label x:Name="DoneButton"
                        Grid.Row="1"
@@ -301,9 +339,13 @@
 
                 </Label>
 
+                <!-- ~~~ END DONE BUTTON ~~~ -->
+
             </Grid>
 
         </Border>
+
+        <!-- ===== END LAYER 3 ===== -->
 
     </Grid>
 
